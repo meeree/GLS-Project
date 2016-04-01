@@ -1,11 +1,15 @@
 (* GLS grammar using EBNF metasyntax *)
 
+symbol table = "symbol table {",
+         whitespace, {symbol, whitespace, ",", whitespace}, ";", 
+         "}" ;
+
 axiom = "axiom {"
-         {" "}, string, ";",
+         whitespace, string, ";",
          "}" ;
 
 rule = "rule {"
-        {symbol, {" "}, "(", {letter, condition, number}, ")", {" "}, ":=", string, ";"}
+        {symbol, whitespace, "(", {letter, condition, number}, ")", whitespace, ":=", string, ";"}
         "}" ;
 
 string = symbol, {symbol} ;
@@ -24,3 +28,5 @@ letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
 
 digit = digit not zero | "0" ;
 digit not zero = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+whitespace = {" "} ;

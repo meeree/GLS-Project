@@ -1,24 +1,22 @@
-(* GLS grammar using EBNF metasyntax *)
+( * GLS grammar using EBNF metasyntax *)
 
-(*
-symbol table = "symbol table {",
-         whitespace, {symbol, whitespace, ",", whitespace}, ";", 
+( *
+symbol table = "symbol table { ",
+         whitespace, { symbol, whitespace, ",", whitespace}, ";", 
          "}" ;
 *)
 
-axiom = "axiom {"
-         whitespace, string, ";",
-         "}" ;
+axiom = "axiom"
+         whitespace, string, ";" ;
 
-rule = "rule {"
-        {symbol, whitespace, "(", {letter, condition, number}, ")", whitespace, ":=", string, ";"}
-        "}" ;
+production = "productions { "
+        { whitespace, ":", whitespace, symbol, whitespace, "( ", { letter, condition, number}, ")", whitespace, ":=", string, ";"} ;
 
-string = symbol, whitespace, {symbol, whitespace} ;
-symbol = letter, {letter}, "(", {letter, [arithmetic operator, number] | number, ","}, letter, [arithmetic operator, number] | number, ")" ;
+string = symbol, whitespace, { symbol, whitespace} ;
+symbol = letter, { letter}, "( ", { letter, [arithmetic operator, number] | number, ","}, letter, [arithmetic operator, number] | number, ")" ;
 condition = "<" | ">" | "<=" | ">=" | "=" | "!=" ;
-number = ["-"], digit not zero, {digit} ;
-(* operator = ";" | "(" | ")" | ":=" ; *)
+number = ["-"], digit not zero, { digit} ;
+( * operator = ";" | "( " | ")" | ":=" ; *)
 
 letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
        | "H" | "I" | "J" | "K" | "L" | "M" | "N"
@@ -32,4 +30,4 @@ letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
 digit = digit not zero | "0" ;
 digit not zero = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 
-whitespace = {" "} ;
+whitespace = { " "} ;

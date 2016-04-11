@@ -3,33 +3,16 @@
 #include <fstream>
 #include <iostream>
 
-//class Symbol {
-//private:
-//   std::string mName;
-//   std::vector<double> mParams;
-//
-//public:
-//   Symbol (std::string const &name, std::vector<double> const &params) : 
-//      mName {name},
-//      mParams {params}
-//   {}
-//
-//   std::vector<double> getParams () const { return mParams; };
-//   std::string getName () const { return mName; };
-//   void setParams (std::vector<double> const &newParams);
-//
-//};
-
 class Token {
 protected:
    union typeStorage {
       typeStorage () {}
       void setVal (int * const &intPtr) {mInt = intPtr; }
       void setVal (double * const &floatPtr) {mFloat = floatPtr; }
-      void setVal (std::unique_ptr<std::string> const &stringPtr) {mString = stringPtr; }
+      void setVal (std::string * const &stringPtr) {mString = stringPtr; }
       int * mInt;
       double * mFloat;
-      std::unique_ptr<std::string> mString;
+      std::string * mString;
    } mTypeStorage;
    //ADD DESTRUCTOR
    
@@ -46,38 +29,48 @@ protected:
 public:
    Token (token_type_t const &type, int * const &intPtr) : mType { type } { mTypeStorage.setVal (intPtr); }
    Token (token_type_t const &type, double * const &floatPtr) : mType { type } { mTypeStorage.setVal (floatPtr); }
-   Token (token_type_t const &type, std::unique_ptr<std::string> const &stringPtr) : mType { type } { mTypeStorage.setVal (stringPtr); }
+   Token (token_type_t const &type, std::string * const &stringPtr) : mType { type } { mTypeStorage.setVal (stringPtr); }
+
+   bool isInt () const { return mType == INT; }
+   bool isFloat () const { return mType == FLOAT; }
+   bool isIdentifier () const { return mType == IDENTIFIER; }
+   bool isOperator () const { return mType == OPERATOR; }
+   bool isCondition () const { return mType == CONDITION; }
 };
 
 class IntToken : public Token {
 public:
    IntToken (int * const &intPtr) : Token (INT, intPtr) {}
    int * getData () const { return mTypeStorage.mInt; }
+   ~IntToken () { delete mTypeStorage.mInt; }
 };
 
 class FloatToken : public Token {
 public:
    FloatToken (double * const &floatPtr) : Token (FLOAT, floatPtr) {}
    double * getData () const { return mTypeStorage.mFloat; }
+   ~FloatToken () { delete mTypeStorage.mFloat; }
 };
 
 class IdentifierToken : public Token {
 public:
-   IdentifierToken (std::unique_ptr<std::string> const &stringPtr) : Token (IDENTIFIER, stringPtr) {}
-   std::unique_ptr<std::string> getData () const { return mTypeStorage.mString; }
-   ~IdentifierToken () { std::cout<<"deleting more pointers :)"<<std::endl; delete mTypeStorage.mString; }
+   IdentifierToken (std::string * const &stringPtr) : Token (IDENTIFIER, stringPtr) {}
+   std::string * getData () const { return mTypeStorage.mString; }
+   ~IdentifierToken () { delete mTypeStorage.mString; }
 };
 
 class OperatorToken : public Token {
 public:
-   OperatorToken (std::unique_ptr<std::string> const &stringPtr) : Token (OPERATOR, stringPtr) {}
-   std::unique_ptr<std::string> getData () const { return mTypeStorage.mString; }
+   OperatorToken (std::string * const &stringPtr) : Token (OPERATOR, stringPtr) {}
+   std::string * getData () const { return mTypeStorage.mString; }
+   ~OperatorToken () { delete mTypeStorage.mString; }
 };
 
 class ConditionToken : public Token {
 public:
-   ConditionToken (std::unique_ptr<std::string> const &stringPtr) : Token (CONDITION, stringPtr) {}
-   std::unique_ptr<std::string> getData () const { return mTypeStorage.mString; }
+   ConditionToken (std::string * const &stringPtr) : Token (CONDITION, stringPtr) {}
+   std::string * getData () const { return mTypeStorage.mString; }
+   ~ConditionToken () { delete mTypeStorage.mString; }
 };
 
 typedef std::vector<Token*> GLSstring;

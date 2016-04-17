@@ -5,6 +5,19 @@
 #ifndef cassert
 #include <cassert>
 #endif
+#ifndef VALUE_H
+#define VALUE_H
+#include "value.h"
+#endif
+#ifndef SYMBOL_H
+#define SYMBOL_H
+#include "symbol.h"
+#endif
+
+virtual Tree::~Tree () { 
+   delete mTreeEval;
+   for ( auto const &child: mChildren ) { delete child; } 
+}
 
 // Func Tree Children Evaluate Implementation: 
 
@@ -43,11 +56,11 @@ Value * const &OrTree::evaluateTree ( Symbol const &symbolContext, std::vector<S
 
 // Storage Func Tree Children Evaluate Implementation: 
 
-Value * const &SymbolTree::evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext ) {
-   Value * const &nameEval {mNameTree->evaluateTree(symbolContext, stringContext ) };
-   assert ( nameEval->isString() );
-
-}
+//Value * const &SymbolTree::evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext ) {
+//   Value * const &nameEval {mNameTree->evaluateTree(symbolContext, stringContext ) };
+//   assert ( nameEval->isString() );
+//
+//}
 
 Value * const &LookupTree::evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext ) {
    Value * const &keyEval {mKeyTree->evaluateTree(symbolContext, stringContext ) };

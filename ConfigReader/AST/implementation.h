@@ -3,6 +3,23 @@
 #include "tree.h"
 #endif 
 
+class StorageFuncTree: public Tree {
+protected:
+   Value * mReturnValue;
+   StorageFuncTree () {}
+   StorageFuncTree ( Value * const &returnValue ) : mReturnValue { returnValue } {}
+   ~StorageFuncTree () { delete mReturnValue; } 
+   virtual Value * const &evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext ) = 0;
+};
+
+class Leaf : public Tree {
+private:
+   Value * mStoredValue;
+public:
+   ~Leaf () { delete mStoredValue; } 
+   Value * const &evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext ) const { return mStoredValue; } 
+};
+
 // Func Tree Children:
 
 class ITETree : public Tree {
@@ -32,15 +49,15 @@ public:
    OrTree ( Tree * const &leftTree, Tree * const &rightTree ) : mLeftTree { leftTree }, mRightTree { rightTree } {}
    Value * const &evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext );
 };
-
-class SymbolTree : public Tree {
-private:
-   Tree * const &mNameTree;
-   std::vector<Tree*> mParamChildren;
-public:
-   FillStringTree ( Tree * const &nameTree, std::vector<Tree*> const &paramChildren ) : mNameTree { nameTree }, mChildren { children } {}
-   Value * const &evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext );
-};
+//
+//class SymbolTree : public Tree {
+//private:
+//   Tree * const &mNameTree;
+//   std::vector<Tree*> mParamChildren;
+//public:
+//   FillStringTree ( Tree * const &nameTree, std::vector<Tree*> const &paramChildren ) : mNameTree { nameTree }, mChildren { children } {}
+//   Value * const &evaluateTree ( Symbol const &symbolContext, std::vector<Symbol> &stringContext );
+//};
 
 // Storage Func Tree Children:
 

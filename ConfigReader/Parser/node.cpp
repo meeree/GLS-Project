@@ -1,3 +1,11 @@
+#ifndef NODE_H
+#define NODE_H
+#include "node.h"
+#endif
+#ifndef cmath
+#include <cmath>
+#endif
+
 Node::Node () {
 }
 Node::~Node () {
@@ -26,7 +34,7 @@ Value * PlusNode::evalNode ( std::vector<Value * > const &inVec ) const {
       return inVec[0]->getInt () + inVec[1]->getInt ();
    }
    // AUTOMATIC CONVERSION IN VALUE FROM INT TO FLOAT AND BACKWARDS
-   return inVec[0]->getFloat /* */t () + inVec[1]->getFloat ();
+   return inVec[0]->getFloat () + inVec[1]->getFloat ();
 }
 Value * MinusNode::evalNode ( std::vector<Value * > const &inVec ) const { 
    if ( intCheck ( inVec ) ) {
@@ -71,11 +79,11 @@ Value * LessEqualNode::evalNode ( std::vector<Value * > const &inVec ) const {
 Value * GreaterEqualNode::evalNode ( std::vector<Value * > const &inVec ) const {
    return inVec[0]->getFloat () >= inVec[1]->getFloat ();
 }
-class EqualNode : public Node {
-public:
-   Value * evalNode ( std::vector<Value * > const &inVec ) const;
-};
-class NotEqualNode : public Node {
-public:
-   Value * evalNode ( std::vector<Value * > const &inVec ) const;
-};
+Value * EqualNode::evalNode ( std::vector<Value * > const &inVec ) const {
+   return inVec[0]->getFloat () == inVec[1]->getFloat ();
+}
+Value * NotEqualNode::evalNode ( std::vector<Value * > const &inVec ) const {
+   Value newValue { new 
+   if ( 
+   return ;
+}

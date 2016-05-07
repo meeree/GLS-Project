@@ -1,10 +1,7 @@
 ( * GLS grammar using EBNF metasyntax * )
 
-( *
 symbol table = "symbol table { ",
          whitespace, { symbol, whitespace, ",", whitespace }, ";", 
-         " }" ;
-* )
 
 axiom = "axiom"
          whitespace, string, ";" ;

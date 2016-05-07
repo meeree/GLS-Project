@@ -10,9 +10,9 @@ protected:
    std::vector<Tree * > mChildren;
    Node * mRoot;
    Tree ( std::vector<Tree * > const &children, Node * const &root );
-   virtual ~Tree ();
 public:
    virtual Value * const evalTree () const = 0;
+   virtual ~Tree ();
 };
 
 class WrapperTree : public Tree {

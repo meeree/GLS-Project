@@ -18,11 +18,17 @@ private:
    Value * mValue;
 public:
    ValueNode ( Value * const &valuePtr );
-   virtual ~Value ();
+   virtual ~ValueNode ();
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
 
-class ArithNode : public Node {
+class DynamicValueNode : public Node {
+protected:
+   Value * mValue;
+   void setValue ( Value const &newValue );
+};
+
+class ArithNode : public DynamicValueNode {
 protected:
    bool intCheck ( std::vector<Value*> const &inVec ) const;
 };
@@ -51,27 +57,27 @@ public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
 
-class LessNode : public Node {
+class LessNode : public DynamicValueNode {
 public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
-class GreaterNode : public Node {
+class GreaterNode : public DynamicValueNode {
 public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
-class LessEqualNode : public Node {
+class LessEqualNode : public DynamicValueNode {
 public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
-class GreaterEqualNode : public Node {
+class GreaterEqualNode : public DynamicValueNode {
 public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
-class EqualNode : public Node {
+class EqualNode : public DynamicValueNode {
 public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };
-class NotEqualNode : public Node {
+class NotEqualNode : public DynamicValueNode {
 public:
    Value * evalNode ( std::vector<Value * > const &inVec ) const;
 };

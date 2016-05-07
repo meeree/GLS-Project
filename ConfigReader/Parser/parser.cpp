@@ -1,6 +1,10 @@
 #ifndef vector 
 #include <vector>
 #endif
+#ifndef PARSER_H
+#define PARSER_H
+#include "parser.h"
+#endif
 #ifndef TREE_H 
 #define TREE_H 
 #include "tree.h"
@@ -24,28 +28,31 @@ bool TreeTableCompare::operator ()( std::pair<std::string, unsigned> const &key1
    unsigned const &paramSize1 { std::get<1>(key1) };
    unsigned const &paramSize2 { std::get<1>(key2) };
 
-   if ( name1 == name2 && paramSize1 == paramSize2 ) {
+   if ( name1 == name2 && paramSize1 == paramSize2) {
       throw "function "+name1+" defined twice with same number of parameters ";
    }
 
    return paramSize1 < paramSize2;
 }
 
-Tree * Parser::parseProduction ( std::vector<Token*> const &tokenString ) const {
+Parser::~Parser () {
+   for ( auto const &iPair: mTreeTable ) {
+      delete iPair.second;
+   }
+}
+
+Tree * Parser::parseProduction ( std::vector<Token*> &tokenString ) const {
 
    Node * nullNode { new ValueNode { nullptr } };
    Tree * nullTree { new WrapperTree { {}, nullNode } };
 
-   std::vector<Token*>::iterator iter { tokenString.begin () };
-
-   //GET NAME
+   std::vector<Token*>::iterator iter = { tokenString.begin () };
    ++iter;
 
-   //ADD SIMPLENODE 
-   Tree * &cndTree { andExpr ( iter ) };
+   Tree * cndTree { andExpr ( iter ) };
    
    Node * ruleNode { new ValueNode { nullptr } };
-   Tree * ruleTree { new parseRules ( iter ) };
+   Tree * ruleTree { stringExpr ( iter ) };
 
    Tree * topTree { new ITETree { cndTree, ruleTree, nullTree } };
 
@@ -53,68 +60,67 @@ Tree * Parser::parseProduction ( std::vector<Token*> const &tokenString ) const 
 
 }
 
-Tree * Parser::andExpr ( std::vector<Token*>::iterator const &iter ) {
-   if ( *iter->getOperator () == ')' ) {
-      Node * trueNode { new ValueNode { true } };
+Tree * Parser::andExpr ( std::vector<Token*>::iterator &iter ) const {
+   if ( (*iter)->getOperator () == ")" ) {
+      Value * trueValue { new BoolValue { true } };
+      Node * trueNode { new ValueNode { trueValue } };
       Tree * trueTree { new WrapperTree { {}, trueNode } };
       return trueTree;
    } 
 
-   Tree * &leftTree { cndExpr ( ++iter ) };
-   Tree * &rightTree { andExpr ( ++iter ) };
+   Tree * leftTree { cndExpr ( ++iter ) };
+   Tree * rightTree { andExpr ( ++iter ) };
    Tree * topTree { new AndTree { leftTree, rightTree } };
 
    return topTree;
 }
 
-Tree * Parser::cndExpr ( std::vector<Token*>::iterator const &iter ) {
-   Tree * &leftTree { addExpr ( iter ) };
-   switch ( *(iter+1)->getCondition () ) {
-      //ADD CONDITION TREES 
-      case "<":
-         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-         Node * topNode { new LessNode {} };
-         Tree * topTree { new WrapperTree { children, topNode } };
-         return topTree;
-      case ">":
-         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-         Node * topNode { new GreaterNode {} };
-         Tree * topTree { new WrapperTree { children, topNode } };
-         return topTree;
-      case "<=":
-         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-         Node * topNode { new LessEqualNode {} };
-         Tree * topTree { new WrapperTree { children, topNode } };
-         return topTree;
-      case ">=":
-         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-         Node * topNode { new GreaterEqualNode {} };
-         Tree * topTree { new WrapperTree { children, topNode } };
-         return topTree;
-      case "=":
-         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-         Node * topNode { new EqualNode {} };
-         Tree * topTree { new WrapperTree { children, topNode } };
-         return topTree;
-      case "!=":
-         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-         Node * topNode { new NotEqualNode {} };
-         Tree * topTree { new WrapperTree { children, topNode } };
-         return topTree;
+Tree * Parser::cndExpr ( std::vector<Token*>::iterator &iter) const {
+   Tree * leftTree { addExpr ( iter ) };
+   std::string const &cnd { (*(iter+1))->getCondition () };
+   if ( cnd == "<" ) {
+      std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+      Node * topNode { new LessNode {} };
+      Tree * topTree { new WrapperTree { children, topNode } };
+      return topTree;
+   } else if ( cnd == ">" ) {
+      std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+      Node * topNode { new GreaterNode {} };
+      Tree * topTree { new WrapperTree { children, topNode } };
+      return topTree;
+   } else if ( cnd == "<=" ) {
+      std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+      Node * topNode { new LessEqualNode {} };
+      Tree * topTree { new WrapperTree { children, topNode } };
+      return topTree;
+   } else if ( cnd == ">=" ) {
+      std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+      Node * topNode { new GreaterEqualNode {} };
+      Tree * topTree { new WrapperTree { children, topNode } };
+      return topTree;
+   } else if ( cnd == "==" ) {
+      std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+      Node * topNode { new EqualNode {} };
+      Tree * topTree { new WrapperTree { children, topNode } };
+      return topTree;
+   } else if ( cnd == "!=" ) {
+      std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+      Node * topNode { new NotEqualNode {} };
+      Tree * topTree { new WrapperTree { children, topNode } };
+      return topTree;
    }
 }
 
-Tree * Parser::addExpr ( std::vector<Token*>::iterator const &iter ) {
-   Tree * &leftTree { mulExpr ( iter ) };
-   if ( *(iter+1)->isOperator () ) {
-      switch ( *(iter+1)->getOperator () ) {
-         case '+': 
+Tree * Parser::addExpr ( std::vector<Token*>::iterator &iter) const {
+   Tree * leftTree { mulExpr ( iter ) };
+   if ( (*(iter+1))->isOperator () ) {
+      std::string const &cnd { (*(iter+1))->getCondition () };
+      if ( cnd == "+" ) {
             std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
             Node * topNode { new PlusNode {} };
             Tree * topTree { new WrapperTree { children, topNode } };
             return topTree;
-
-         case '-':
+      } else if ( cnd == "-" ) {
             std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
             Node * topNode { new MinusNode {} };
             Tree * topTree { new WrapperTree { children, topNode } };
@@ -125,38 +131,36 @@ Tree * Parser::addExpr ( std::vector<Token*>::iterator const &iter ) {
    return leftTree;
 }
 
-Tree * Parser::mulExpr ( std::vector<Token*>::iterator const &iter ) {
-   Tree * &leftTree { powExpr ( iter ) };
-   if ( *(iter+1)->isOperator () ) {
-      switch ( *(iter+1)->getOperator () ) {
-         case '*': 
-            std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-            Node * topNode { new MulNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
-
-         case '/':
-            std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
-            Node * topNode { new DivNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+Tree * Parser::mulExpr ( std::vector<Token*>::iterator &iter) const {
+   Tree * leftTree { powExpr ( iter ) };
+   if ( (*(iter+1))->isOperator () ) {
+      std::string const &cnd { (*(iter+1))->getCondition () };
+      if ( cnd == "*" ) {
+         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+         Node * topNode { new MulNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      } else if ( cnd == "/" ) {
+         std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
+         Node * topNode { new DivNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       }
    }
 
    return leftTree;
 }
 
-Tree * Parser::powExpr ( std::vector<Token*>::iterator const &iter ) {
-   Tree * &leftTree { brackExpr ( iter ) };
-   if ( *(iter+1)->isOperator () ) {
-      switch ( *(iter+1)->getOperator () ) {
-         case '^': 
+Tree * Parser::powExpr ( std::vector<Token*>::iterator &iter) const {
+   Tree * leftTree { brackExpr ( iter ) };
+   if ( (*(iter+1))->isOperator () ) {
+      std::string const &cnd { (*(iter+1))->getCondition () };
+      if ( cnd == "^" ) {
             std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
             Node * topNode { new PowNode {} };
             Tree * topTree { new WrapperTree { children, topNode } };
             return topTree;
-
-         case '~':
+      } else if ( cnd == "~" ) {
             std::vector<Tree*> children { leftTree, addExpr ( ++(++iter) ) };
             Node * topNode { new PowRootNode {} };
             Tree * topTree { new WrapperTree { children, topNode } };
@@ -167,9 +171,10 @@ Tree * Parser::powExpr ( std::vector<Token*>::iterator const &iter ) {
    return leftTree;
 }
 
-Tree * Parser::brackExpr ( std::vector<Token*>::iterator const &iter ) {
-   if ( *iter->getOperator () == '(' ) {
-      Tree * &leftTree { addExpr ( ++iter ) };
+Tree * Parser::brackExpr ( std::vector<Token*>::iterator &iter) const {
+   std::string const &cnd { (*(iter+1))->getCondition () };
+   if ( (*iter)->isOperator () && cnd == "(" ) {
+      Tree * leftTree { addExpr ( ++iter ) };
       ++iter;
       return leftTree;
    }
@@ -177,20 +182,22 @@ Tree * Parser::brackExpr ( std::vector<Token*>::iterator const &iter ) {
    return staticNumExpr ( iter );
 }
 
-Tree * Parser::staticNumExpr ( std::vector<Token*>::iterator const &iter ) {
-   if ( *iter->isInt () ) {
-      Node * topNode { new IntNode { *iter } };
-      Tree * topTree { new WrapperTree { {}, ValueNode } };
+Tree * Parser::staticNumExpr ( std::vector<Token*>::iterator &iter) const {
+   if ( (*iter)->isInt () ) {
+      Value * topValue { new IntValue { (*iter)->getInt() } };
+      Node * topNode { new ValueNode { topValue } };
+      Tree * topTree { new WrapperTree { {}, topNode } };
       return topTree;
-   } else if ( *iter->isFloat () ) {
-      Node * topNode { new FloatNode { *iter } };
-      Tree * topTree { new WrapperTree { {}, ValueNode } };
+   } else if ( (*iter)->isFloat () ) {
+      Value * topValue { new FloatValue { (*iter)->getFloat() } };
+      Node * topNode { new ValueNode { topValue } };
+      Tree * topTree { new WrapperTree { {}, topNode } };
       return topTree;
    }
 
    return dynamicNumExpr ( iter );
 }
 
-Tree * Parser::dynamicNumExpr ( std::vector<Token*>::iterator const &iter ) {
+Tree * Parser::dynamicNumExpr ( std::vector<Token*>::iterator &iter) const {
    // ADD CODE
 }

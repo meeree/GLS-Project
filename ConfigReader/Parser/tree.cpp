@@ -1,3 +1,7 @@
+#ifndef TREE_H
+#define TREE_H
+#include "tree.h"
+#endif
 #ifndef algorithm
 #include <algorithm>
 #endif
@@ -17,29 +21,29 @@ Tree::~Tree () {
 
 WrapperTree::WrapperTree ( std::vector<Tree * > const &children, Node * const &root ) : Tree { children, root } {
 }
-Value * const WrapperTree::evalTree () const {
-   std::vector<Value * > retVec { mChildren.size() };
-   std::transform( mChildren.begin(), mChildren.end(), retVec.begin(), 
+Value WrapperTree::evalTree () const {
+   std::vector<Value > retVec ( mChildren.size () );
+   std::transform ( mChildren.begin (), mChildren.end (), retVec.begin (), 
          [] ( Tree * const &iChild ) { return iChild->evalTree (); } );
    return mRoot->evalNode ( retVec );
 }
 
-ITETree::ITETree ( Tree * const &leftTree, Tree * const &middleTree, Tree* const &rightTree ) : Tree { {leftTree, middleTree, rightTree}, nullptr } {
+ITETree::ITETree ( Tree * const &leftTree, Tree * const &middleTree, Tree* const &rightTree ) : Tree { { leftTree, middleTree, rightTree }, nullptr } {
 }
-Value * const ITETree::evalTree () const {
-   Value * const leftEval { mChildren[0]->evalNode() };
-   if ( leftEval->getBool() ) {
-      return mChildren[1]->evalNode();
+Value ITETree::evalTree () const {
+   Value leftEval { mChildren[0]->evalTree () };
+   if ( leftEval.getBool () ) {
+      return mChildren[1]->evalTree ();
    } 
-   return mChildren[2]->evalNode();
+   return mChildren[2]->evalTree ();
 }
 
-AndTree::AndTree ( Tree * const &leftTree, Tree * const &rightTree ) : Tree { {leftTree, rightTree}, new SimpleNode {} } {
+AndTree::AndTree ( Tree * const &leftTree, Tree * const &rightTree ) : Tree { { leftTree, rightTree }, new SimpleNode {} } {
 }
-Value * const AndTree::evalTree () const {
-   Value * const leftEval { mChildren[0]->evalNode() };
-   if ( leftEval->getBool() ) {
-      return mChildren[1]->evalNode();
+Value AndTree::evalTree () const {
+   Value leftEval { mChildren[0]->evalTree () };
+   if ( leftEval.getBool () ) {
+      return mChildren[1]->evalTree ();
    } 
    return leftEval;
 }

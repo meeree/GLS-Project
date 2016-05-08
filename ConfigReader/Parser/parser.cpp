@@ -62,7 +62,7 @@ Tree * Parser::parseProduction ( std::vector<Token*> &tokenString ) const {
 
 Tree * Parser::andExpr ( std::vector<Token*>::iterator &iter ) const {
    if ( (*iter)->getOperator () == ")" ) {
-      Value * trueValue { new BoolValue { true } };
+      Value trueValue { true };
       Node * trueNode { new ValueNode { trueValue } };
       Tree * trueTree { new WrapperTree { {}, trueNode } };
       return trueTree;
@@ -184,12 +184,12 @@ Tree * Parser::brackExpr ( std::vector<Token*>::iterator &iter) const {
 
 Tree * Parser::staticNumExpr ( std::vector<Token*>::iterator &iter) const {
    if ( (*iter)->isInt () ) {
-      Value * topValue { new IntValue { (*iter)->getInt() } };
+      Value topValue { (*iter)->getInt() };
       Node * topNode { new ValueNode { topValue } };
       Tree * topTree { new WrapperTree { {}, topNode } };
       return topTree;
    } else if ( (*iter)->isFloat () ) {
-      Value * topValue { new FloatValue { (*iter)->getFloat() } };
+      Value topValue { (*iter)->getFloat() };
       Node * topNode { new ValueNode { topValue } };
       Tree * topTree { new WrapperTree { {}, topNode } };
       return topTree;

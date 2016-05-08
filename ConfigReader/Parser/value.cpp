@@ -1,68 +1,62 @@
+#ifndef VALUE_H
+#define VALUE_H
+#include "value.h"
+#endif
+
+Value::ValueContainer::ValueContainer ( int const &intVal ) : mInt { new int { intVal } } {
+}
+Value::ValueContainer::ValueContainer ( double const &floatVal ) : mFloat { new double { floatVal } } {
+}
+Value::ValueContainer::ValueContainer ( bool const &boolVal ) : mBool { new bool { boolVal } } {
+}
+
 Value::Value () {
 }
-Value::~Value () {
+Value::Value ( int const &intVal ) : mContainer { intVal }, mValueType { INT } {
 }
-int &Value::getInt () const { 
-   throw "no int or float value";
-   exit ( EXIT_FAILURE ); 
-} 
-double &Value::getFloat () const { 
-   throw "no int or float value";
-   exit ( EXIT_FAILURE ); 
+int * const &Value::getInt () const {
+   return mContainer.mInt;
 }
-double &Value::getBool () const { 
-   throw "no bool value";
-   exit ( EXIT_FAILURE ); 
+bool Value::isInt () const {
+   return mValueType == INT;
+}
+void Value::setInt ( int const &newInt ) {
+   delete mContainer.mInt;
+   mContainer.mInt = new int { newInt };
 }
 
-bool Value::isInt () const {
-   return false;
+Value::Value ( double const &floatVal ) : mContainer { floatVal } {
+}
+double * const &Value::getFloat () const {
+   return mContainer.mFloat;
 }
 bool Value::isFloat () const {
-   return false;
+   return mValueType == FLOAT;
+}
+void Value::setFloat ( double const &newFloat ) {
+   delete mContainer.mFloat;
+   mContainer.mFloat = new double { newFloat };
+}
+
+Value::Value ( bool const &boolVal ) : mContainer { boolVal } {
+}
+bool * const &Value::getBool () const {
+   return mContainer.mBool;
 }
 bool Value::isBool () const {
-   return false;
+   return mValueType == BOOL;
+}
+void Value::setBool ( bool const &newBool ) {
+   delete mContainer.mBool;
+   mContainer.mBool = new bool { newBool }; 
 }
 
-IntValue::IntValue ( int const &value ) : mValue { value } {
-}
-IntValue::~IntValue () {
-   delete mValue;
-}
-int &IntValue::getInt () const { 
-   return mValue;
-}
-double &IntValue::getFloat () const { 
-   return (double)mValue;
-}
-bool IntValue::isInt () const {
-   return true;
-}
-
-FloatValue::FloatValue ( int const &value ) : mValue { value } {
-}
-FloatValue::~FloatValue () {
-   delete mValue;
-}
-double &FloatValue::getFloat () const { 
-   return mValue;
-}
-int &FloatValue::getInt () const { 
-   return (int)mValue;
-}
-bool FloatValue::isFloat () const {
-   return true;
-}
-
-BoolValue::BoolValue ( int const &value ) : mValue { value } {
-}
-BoolValue::~BoolValue () {
-   delete mValue;
-}
-bool &BoolValue::getBool () const { 
-   return mValue;
-}
-bool BoolValue::isBool () const {
-   return true;
+Value::~Value () {
+   if ( isInt () ) {
+      delete mContainer.mInt;
+   } else if ( isFloat () ) {
+      delete mContainer.mFloat;
+   } else if ( isBool () ) {
+      delete mContainer.mBool;
+   }
 }

@@ -1,46 +1,35 @@
 class Value {
+private:
+   enum value_type_t {
+      INT, FLOAT, BOOL 
+   } mValueType;
+
+   union ValueContainer {
+      ValueContainer ( int const &intVal );
+      ValueContainer ( double const &floatVal );
+      ValueContainer ( bool const &boolVal );
+      int * mInt;
+      double * mFloat;
+      bool * mBool;
+   } mContainer;
+
 public:
    Value ();
-   virtual ~Value ();
 
-   virtual int const &getInt () const;
-   virtual double const &getFloat () const;
-   virtual bool const &getBool () const;
-   
-   virtual bool isInt () const;
-   virtual bool isFloat () const;
-   virtual bool isBool () const;
+   Value ( int const &intVal );
+   int * const &getInt () const;
+   bool isInt () const; 
+   void setInt ( int const &newInt );
+
+   Value ( double const &doubleVal );
+   double * const &getFloat () const;
+   bool isFloat () const; 
+   void setFloat ( double const &newFloat );
+
+   Value ( bool const &boolVal );
+   bool * const &getBool () const;
+   bool isBool () const; 
+   void setBool ( bool const &newBool );
+
+   ~Value ();
 };
-
-class IntValue : public Value {
-private:
-   int mValue;
-public:
-   IntValue ( int const &value );
-   virtual ~IntValue ();
-   int const &getInt () const;
-   double const &getFloat () const;
-   bool isInt () const;
-};
-
-class FloatValue : public Value {
-private:
-   double mValue;
-public:
-   FloatValue ( double const &value );
-   virtual ~FloatValue ();
-   double const &getFloat () const;
-   int const &getInt () const;
-   bool isFloat () const;
-};
-
-class BoolValue : public Value {
-private:
-   bool mValue;
-public:
-   BoolValue ( bool const &value );
-   virtual ~BoolValue ();
-   bool const &getBool () const;
-   bool isBool () const;
-};
-

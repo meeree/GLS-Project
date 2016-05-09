@@ -1,72 +1,65 @@
-std::string const &Token::getOperator () const {
-   throw "not an operator token";
-   exit ( EXIT_FAILURE );
+#ifndef TOKEN_H
+#define TOKEN_H
+#include "token.h"
+#endif
+
+Token::TokenContainer::TokenContainer () {
 }
-std::string const &Token::getCondition () const {
-   throw "not a condition token";
-   exit ( EXIT_FAILURE );
+Token::TokenContainer::TokenContainer ( std::string const &stringTok ) : mString { new std::string { stringTok } } {
 }
-int const &Token::getInt () const {
-   throw "not an int token";
-   exit ( EXIT_FAILURE );
+Token::TokenContainer::TokenContainer ( int const &intTok ) : mInt { new int { intTok } } {
 }
-double const &Token::getFloat () const {
-   throw "not a float token";
-   exit ( EXIT_FAILURE );
+Token::TokenContainer::TokenContainer ( double const &floatTok ) : mFloat { new double { floatTok } } {
 }
 
-
-bool Token::isOperator () const {
-   return false;
-}
-bool Token::isCondition () const;
-   return false;
-}
-bool Token::isInt () const;
-   return false;
-}
-bool Token::isFloat () const;
-   return false;
+Token::Token () {
 }
 
-OperatorToken::OperatorToken ( std::string const &token ) : mToken { token } {
+Token::Token ( std::string const &stringTok ) : mContainer { stringTok }, mTokenType { STRING } {
 }
-std::string const &OperatorToken::getOperator () const {
-   return mToken; 
+std::string * const &Token::getString () const {
+   return mContainer.mString;
 }
-bool OperatorToken::isOperator () const {
-   return true;
+bool Token::isString () const {
+   return mTokenType == STRING;
 }
-
-ConditionToken::ConditionToken ( std::string const &token ) : mToken { token } {
-}
-std::string const &ConditionToken::getCondition () const {
-   return mToken; 
-}
-bool ConditionToken::isCondition () const {
-   return true;
+void Token::setString ( std::string const &newString ) {
+   delete mContainer.mString;
+   mContainer.mString = new std::string { newString};
 }
 
-IntToken::IntToken ( int const &token ) : mToken { token } {
+Token::Token ( int const &intTok ) : mContainer { intTok }, mTokenType { INT } {
 }
-int const &IntToken::getInt () const {
-   return mToken; 
+int * const &Token::getInt () const {
+   return mContainer.mInt;
 }
-double &IntToken::getFloat () const { 
-   return (double)mToken;
+bool Token::isInt () const {
+   return mTokenType == INT;
 }
-bool IntToken::isInt () const {
-   return true;
+void Token::setInt ( int const &newInt ) {
+   delete mContainer.mInt;
+   mContainer.mInt = new int { newInt };
 }
 
-FloatToken::FloatToken ( double const &token ) : mToken { token } {
+Token::Token ( double const &floatTok ) : mContainer { floatTok }, mTokenType { FLOAT } {
 }
-double const &FloatToken::getFloat () const {
-   return mToken; 
+double * const &Token::getFloat () const {
+   return mContainer.mFloat;
 }
-int &FloatToken::getInt () const { 
-   return (int)mToken;
+bool Token::isFloat () const {
+   return mTokenType == FLOAT;
 }
-bool FloatToken::isFloat () const {
-   return true;
+void Token::setFloat ( double const &newFloat ) {
+   delete mContainer.mFloat;
+   mContainer.mFloat = new double { newFloat };
+}
+
+Token::~Token () {
+   if ( isString () ) {
+      delete mContainer.mString;
+   } else if ( isInt () ) {
+      delete mContainer.mInt;
+   } else if ( isFloat () ) {
+      delete mContainer.mFloat;
+   }
 }

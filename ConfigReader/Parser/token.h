@@ -3,52 +3,38 @@
 #endif
 
 class Token {
-public:
-   virtual std::string const &getOperator () const;
-   virtual std::string const &getCondition () const;
-   virtual int const &getInt () const;
-   virtual double const &getFloat () const;
-   
-   virtual bool isOperator () const;
-   virtual bool isCondition () const;
-   virtual bool isInt () const;
-   virtual bool isFloat () const;
-};
-
-class OperatorToken : public Token {
 private:
-   std::string mToken;
-public:
-   OperatorToken ( std::string const &token );
-   std::string const &getOperator () const;
-   bool isOperator () const;
-};
+   enum token_type_t {
+      STRING, INT, FLOAT
+   } mTokenType;
 
-class ConditionToken : public Token {
-private:
-   std::string mToken;
-public:
-   ConditionToken ( std::string const &token );
-   std::string const &getCondition () const;
-   bool isCondition () const;
-};
+   union TokenContainer {
+      TokenContainer ();
+      TokenContainer ( std::string const &stringTok );
+      TokenContainer ( int const &intTok );
+      TokenContainer ( double const &floatTok );
+      std::string * mString;
+      int * mInt;
+      double * mFloat;
+   } mContainer;
 
-class IntToken : public Token {
-private:
-   int mToken;
 public:
-   IntToken ( int const &token );
-   int const &getInt () const;
-   double const &getFloat () const;
-   bool isInt () const;
-};
+   Token ();
 
-class FloatToken : public Token {
-private:
-   double mToken;
-public:
-   FloatToken ( double const &token );
-   double const &getFloat () const;
-   int const &getInt () const;
-   bool isFloat () const;
+   Token ( std::string const &stringTok );
+   std::string * const &getString () const;
+   bool isString () const; 
+   void setString ( std::string const &newString );
+
+   Token ( int const &intTok );
+   int * const &getInt () const;
+   bool isInt () const; 
+   void setInt ( int const &newInt );
+
+   Token ( double const &floatTok );
+   double * const &getFloat () const;
+   bool isFloat () const; 
+   void setFloat ( double const &newFloat );
+
+   ~Token ();
 };

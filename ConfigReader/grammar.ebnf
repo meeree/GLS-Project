@@ -10,7 +10,8 @@ production = "productions { "
         { whitespace, ":", whitespace, symbol, whitespace, "( ", { letter, condition, number }, " )", whitespace, ":=", string, ";" } ;
 
 string = symbol, whitespace, { symbol, whitespace } ;
-symbol = letter, { letter }, "( ", { letter, [arithmetic operator, number] | number, "," }, letter, [arithmetic operator, number] | number, " )" ;
+symbol = word, "( ", { , [arithmetic operator, number] | number, "," }, letter, [arithmetic operator, number] | number, " )" ;
+word = letter, { letter } ;
 condition = "<" | ">" | "<=" | ">=" | "=" | "!=" ;
 number = ["-"], digit not zero, { digit }, [".", { digit }] ;
 ( * operator = ";" | "( " | " )" | ":=" ; * )

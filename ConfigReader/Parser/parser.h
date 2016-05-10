@@ -1,6 +1,9 @@
 #ifndef map
 #include <map>
 #endif
+#ifndef vector
+#include <vector>
+#endif
 #ifndef utility
 #include <utility>
 #endif
@@ -18,9 +21,9 @@ struct TreeTableCompare {
 class Parser {
 private:
    std::map<std::pair<std::string, unsigned>, Tree*, TreeTableCompare> mTreeTable;
+   std::vector<std::pair<std::string, std::vector<std::string> > > mSymbolTable; 
+
 public:
-   ~Parser ();
-   Tree * parseProduction ( std::vector<Token> &tokenString ) const;
    Tree * andExpr ( std::vector<Token>::iterator &iter ) const;
    Tree * cndExpr ( std::vector<Token>::iterator &iter ) const;
    Tree * stringExpr ( std::vector<Token>::iterator &iter ) const;
@@ -30,4 +33,8 @@ public:
    Tree * brackExpr ( std::vector<Token>::iterator &iter ) const;
    Tree * staticNumExpr ( std::vector<Token>::iterator &iter ) const;
    Tree * dynamicNumExpr ( std::vector<Token>::iterator &iter ) const;
+   Parser () = default;
+   void parseSymbolTable ( std::vector<Token> &tokenString );
+   Tree * parseProduction ( std::vector<Token> &tokenString );
+   ~Parser ();
 };

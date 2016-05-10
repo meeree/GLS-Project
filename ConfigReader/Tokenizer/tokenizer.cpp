@@ -1,152 +1,77 @@
-#ifndef TOKEN_H
-#define TOKEN_H
-#include "tokenizer.h"
-#endif
+#include <iostream>
+#include <fstream>
+//#ifndef TOKEN_H
+//#define TOKEN_H
+//#include "tokenizer.h"
+//#endif
+//
 
-GLSstring Tokenizer::readAxiom ( std::ifstream &configFile ) {
-   configFile.clear();
-   configFile.seekg(0, configFile.beg);
+bool cndCheck ( std::string::iterator &iter );
 
+void readAxiom ( std::istream &fl ) {
    std::string line;
-   GLSstring axiom;
-   while ( getline ( configFile, line ) ) {
-      if ( line.find ( "axiom" ) != std::string::npos ) {
-         if ( getline ( configFile, line ) ) {
-            std::string::iterator letter { line.begin( ) };
-
-            if ( *letter == ' ' ) { // whitespace
-               while ( *( ++letter ) == ' ' ) { } 
-            }
-
-            while ( *letter != ';' ) {
-               std::string identifier { *letter };
-               while ( *( letter++ ) != ')' ) { // Name and params
-                  identifier.push_back( *letter );
-               } 
-
-               std::string * identPtr { new std::string( identifier ) };
-               IdentifierToken * identToken { new IdentifierToken ( identPtr ) };
-               axiom.push_back( identToken );
-
-               if ( *letter == ' ') { // whitespace
-                  while ( *( ++letter ) == ' ') { } 
-               }
-            }
-         }
-
-         return axiom;
+   while ( std::getline ( fl, line ) ) {
+      auto iter = line.begin ();
+      while ( iter != line.end () ) {
+         cndCheck ( iter );
+         std::cout<<*iter<<std::endl;
       }
    }
 }
 
-std::vector<GLSstring> Tokenizer::readProductions ( std::ifstream &configFile ) {
-   configFile.clear();
-   configFile.seekg(0, configFile.beg);
-   
-   std::string line;
-   std::vector<GLSstring> productions;
+bool progress ( char const &val1, char const &val2, std::string::iterator &iter ) {
+   if ( *( iter++ ) == val2 ) {
+      ++iter;
+      return true;
+   } 
 
-   while ( getline ( configFile, line ) ) {
-      if ( line.find ( "productions" ) != std::string::npos ) {
-         while ( getline ( configFile, line ) ) {
-            productions.push_back({});
+   return false;
+}
 
-            std::string::iterator letter { line.begin( ) };
-            if ( *letter == ' ') { // whitespace
-               while ( *( ++letter ) == ' ') { } 
-            }
 
-            if ( *(letter++) != ':') { // begin production
-               break;
-            } 
+bool cndCheck ( std::string::iterator &iter ) {
+   if ( progress ( *iter, '=' ) ) {
 
-            if ( *letter == ' ') { // whitespace
-               while ( *( ++letter ) == ' ') { } 
-            }
-
-            std::string identifier { *letter };
-            while ( *( letter++ ) != ')') { // name and params
-               identifier.push_back( *letter );
-            } 
-
-            std::string * identPtr { new std::string( identifier ) };
-            IdentifierToken * identToken { new IdentifierToken ( identPtr ) };
-            productions.back().push_back ( identToken );         
-
-            if ( *letter == ' ') { // whitespace
-               while ( *( ++letter ) == ' ') { } 
-            }
-
-            if ( *(letter++) != '(' ) {
-               throw "Syntax error: no '(' operator";
-            }
-
-            while ( *letter != ')' ) {
-
-               if ( *letter == ' ') { // whitespace
-                  while ( *( ++letter ) == ' ') { } 
-               }
-
-               std::string condition { *letter };
-               while ( *(++letter) != ',') { // param name condition op and number
-                  condition.push_back( *letter );
-               } letter++;
-
-               std::string * cndPtr { new std::string( condition ) };
-               ConditionToken * cndToken { new ConditionToken ( cndPtr ) };
-               productions.back().push_back ( cndToken );         
-
-               if ( *letter == ' ') { // whitespace
-                  while ( *( ++letter ) == ' ') { } 
-               }
-
-            }
-
-            if ( *(++letter) == ' ') { // whitespace
-               while ( *( ++letter ) == ' ') { } 
-            }
-            
-            if ( *letter != ':' || *(++letter) != '=' ) {
-               throw "Syntax error: no ':=' operator";
-            } ++letter;
-
-            std::string * strPtr { new std::string ( ":=" ) };
-            OperatorToken * opToken { new OperatorToken ( strPtr ) };
-            productions.back().push_back ( opToken );
-
-            if ( *letter == ' ') { // whitespace
-               while ( *( ++letter ) == ' ') { } 
-            }
-            
-            while ( *letter != ';' ) {
-               std::string identifier { *letter };
-               while ( *( letter++ ) != ')' ) { // Name and params
-                  identifier.push_back( *letter );
-               }
-
-               std::string * identPtr { new std::string( identifier ) };
-               IdentifierToken * identToken { new IdentifierToken ( identPtr ) };
-               productions.back().push_back( identToken );
-
-               if ( *letter == ' ') { // whitespace
-                  while ( *( ++letter ) == ' ') { } 
-               }
-            }
+   switch ( *iter ) {
+      case '>': {
+         if ( *( ++iter ) == '=' ) {
+            std::cout<<"GREAT EQUAL"<<std::endl;
+         } else {
+            std::cout<<"GREAT"<<std::endl;
          }
-
-         return productions;
+         return true;
       }
+      case '<': { 
+         if ( *( ++iter ) == '=' ) {
+            std::cout<<"LESS EQUAL"<<std::endl;
+         } else {
+            std::cout<<"LESS"<<std::endl;
+         }
+         return true;
+      }
+      case '=': {
+         if ( *( iter+1 ) == '=' ) {
+            std::cout<<"EQUAL"<<std::endl;
+            ++iter;
+            return true;
+         }
+         return false;
+      }
+      case '!': {
+         if ( *( iter+1 ) == '=' ) {
+            std::cout<<"NOT EQUAL"<<std::endl;
+            ++iter;
+            return true;
+         }
+         return false;
+      }
+      default: 
+         return false;
    }
 }
 
-Tokenizer::~Tokenizer () {
-   for (auto &token: mAxiom) {
-      delete token;
-   }
-
-   for (auto const &production: mProductions) {
-      for (auto &token: production) {
-         delete token;
-      }
-   }
+int main () {
+   std::ifstream fl;
+   fl.open ( "./fl.txt" );
+   readAxiom ( fl );
 }

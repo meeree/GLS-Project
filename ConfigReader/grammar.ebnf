@@ -1,32 +1,20 @@
-( * GLS grammar using EBNF metasyntax, whitespace is implied * )
+( * GLS grammar using EBNF metasyntax * )
 
-axiom = "AXIOM", 
-        symbolWithParams, { symbolWithParams }, ";", ;
+symbol table = "symbol table { ",
+         whitespace, { symbol, whitespace, ",", whitespace }, ";", 
 
-constants = "CONSTANTS",
-            [ symbolWithoutParams, { ",", symbolWithoutParams } ], ";", ;
+axiom = "axiom"
+         whitespace, string, ";" ;
 
-productions = "PRODUCTIONS",
-              [ symbolWithoutParams, "(", [ paramExpression, condition, arithmeticExpression, { ",", paramExpression, condition, arithmeticExpression } ], ")", ":=", { symbolWithRule } ], ";", ;
+production = "productions { "
+        { whitespace, ":", whitespace, symbol, whitespace, "( ", { letter, condition, number }, " )", whitespace, ":=", string, ";" } ;
 
-symbolWithParams = word, "(", { number }, ")" ;
-symbolWithoutParams = word, "(", { word }, ")" ;
-symbolWithRule = word, "(", { paramExpression }, ")" ;
-
-paramExpression = subParamExpression, { subParamExpression };
-subParamExpression =  [ "(" ], number | word, arithmeticOperator, number | word, { number | word, arithmeticOperator, number | word }, [ ")" ], [ arithmeticOperator, number | word ] ;
-
-arithmeticExpression = subArithmeticExprssion, { subArithmeticExprssion } ;   
-subArithmeticExprssion =  [ "(" ], number, arithmeticOperator, number { number, arithmeticOperator, number }, [ ")" ], [ arithmeticOperator, number ] ;
-
-arithmeticOperator = "+" | "-" | "*" | "/" | "^" | "~" ;
-
-condition = "<" | ">" | "<=" | ">=" | "=" | "!=" ;
+string = symbol, whitespace, { symbol, whitespace } ;
+symbol = word, "( ", { , [arithmetic operator, number] | number, "," }, letter, [arithmetic operator, number] | number, " )" ;
 word = letter, { letter } ;
-
-number = ["-"], digit not zero, { digit }, [".", { digit } ] ;
-digit = digit not zero | "0" ;
-digit not zero = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+condition = "<" | ">" | "<=" | ">=" | "=" | "!=" ;
+number = ["-"], digit not zero, { digit }, [".", { digit }] ;
+( * operator = ";" | "( " | " )" | ":=" ; * )
 
 letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
        | "H" | "I" | "J" | "K" | "L" | "M" | "N"
@@ -36,3 +24,8 @@ letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
        | "j" | "k" | "l" | "m" | "n" | "o" | "p"
        | "q" | "r" | "s" | "t" | "u" | "v" | "w"
        | "x" | "y" | "z" ;
+
+digit = digit not zero | "0" ;
+digit not zero = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+whitespace = { " " } ;

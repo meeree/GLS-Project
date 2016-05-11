@@ -1,77 +1,133 @@
 #include <iostream>
-#include <fstream>
-//#ifndef TOKEN_H
-//#define TOKEN_H
-//#include "tokenizer.h"
-//#endif
-//
+#include <cctype>
+#include <cmath>
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
+#include "tokenizer.h"
+#endif
 
-bool cndCheck ( std::string::iterator &iter );
+std::vector<Token> const &Tokenizer::getTokenString () const {
+   return mTokenString;
+}
 
-void readAxiom ( std::istream &fl ) {
+void Tokenizer::tokenizeFile ( std::istream &fl ) {
    std::string line;
    while ( std::getline ( fl, line ) ) {
       auto iter = line.begin ();
-      while ( iter != line.end () ) {
-         cndCheck ( iter );
-         std::cout<<*iter<<std::endl;
-      }
+      tokenizeString ( iter );
    }
 }
 
-bool progress ( char const &val1, char const &val2, std::string::iterator &iter ) {
-   if ( *( iter++ ) == val2 ) {
-      ++iter;
-      return true;
-   } 
+void Tokenizer::tokenizeString ( std::string::iterator &iter ) {
+   std::string val { "" };
 
-   return false;
+   if ( ! std::isalpha ( *iter ) ) {
+      return tokenizeNum ( iter );
+   }
+
+   while ( std::isalpha ( * ( iter ) ) ) {
+      val += *( iter++ );
+   }
+
+   Token tok { val };
+   mTokenString.push_back ( tok );
+
+   return tokenizeNum ( iter );
 }
 
+void Tokenizer::tokenizeNum ( std::string::iterator &iter ) {
+   std::string val { "" };
 
-bool cndCheck ( std::string::iterator &iter ) {
-   if ( progress ( *iter, '=' ) ) {
+   if ( ! std::isdigit ( *iter ) ) {
+      return tokenizeBool ( iter );
+   }
+
+   while ( std::isdigit ( * ( iter ) ) ) {
+      val += *( iter++ );
+   }
+
+   if ( !( *iter == '.' ) ) {
+      Token tok { std::stoi ( val ) };
+      mTokenString.push_back ( tok );
+      
+      return tokenizeString ( iter );
+   }
+
+   val += *( iter++ );
+   while ( std::isdigit ( * ( iter ) ) ) {
+      val += *( iter++ );
+   }
+
+   std::cout<<std::stod( val )<<","<<val<<std::endl;
+   Token tok { std::stod ( val ) };
+   mTokenString.push_back ( tok );
+
+   return tokenizeString ( iter );
+}
+
+void Tokenizer::tokenizeBool ( std::string::iterator &iter ) {
+   // + - * / ^ ~ ( ) 
+   // , ; 
 
    switch ( *iter ) {
-      case '>': {
-         if ( *( ++iter ) == '=' ) {
-            std::cout<<"GREAT EQUAL"<<std::endl;
-         } else {
-            std::cout<<"GREAT"<<std::endl;
-         }
-         return true;
-      }
-      case '<': { 
-         if ( *( ++iter ) == '=' ) {
-            std::cout<<"LESS EQUAL"<<std::endl;
-         } else {
-            std::cout<<"LESS"<<std::endl;
-         }
-         return true;
-      }
-      case '=': {
+      case '>': case '<': {
+         std::string val { "" };
          if ( *( iter+1 ) == '=' ) {
-            std::cout<<"EQUAL"<<std::endl;
-            ++iter;
-            return true;
+            val += *( iter++ );
+            val += *( iter++ );
+         } else {
+            val += *( iter++ );
          }
-         return false;
+
+         Token tok { val };
+         mTokenString.push_back ( tok );
+
+         return tokenizeString ( iter );
       }
-      case '!': {
+
+      case '=': case '!': case ':': {
          if ( *( iter+1 ) == '=' ) {
-            std::cout<<"NOT EQUAL"<<std::endl;
-            ++iter;
-            return true;
+            std::string val { "" };
+            val += *( iter++ );
+            val += *( iter++ );
+            Token tok { val };
+            mTokenString.push_back ( tok );
          }
-         return false;
+
+         return tokenizeString ( iter );
       }
-      default: 
-         return false;
+
+      case '+': case '-': case '*': case '/': case '^': case '~': case '(': case ')': case ',': case ';': {
+         std::string val { *( iter++ ) };
+         Token tok { val };
+         mTokenString.push_back ( tok );
+         
+         return tokenizeString ( iter );
+      }
    }
+         
+   return tokenizeMisc ( iter );
+}
+
+void Tokenizer::tokenizeMisc ( std::string::iterator &iter ) {
+   if ( *iter == '\0' ) {
+      return;
+   }
+   return tokenizeString ( ++iter );
 }
 
 int main () {
    std::ifstream fl;
    fl.open ( "./fl.txt" );
-   readAxiom ( fl );
+   Tokenizer t;
+   t.tokenizeFile ( fl );
+   for (auto const &iter: t.getTokenString () ) {
+      if ( iter.isString () ) {
+         std::cout<<iter.getString()<<",";
+      } else if ( iter.isInt () ) {
+         std::cout<<iter.getInt()<<",";
+      } else if ( iter.isFloat () ) {
+         std::cout<<iter.getFloat ()<<",";
+      }
+   }
 }

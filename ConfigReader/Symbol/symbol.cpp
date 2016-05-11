@@ -3,9 +3,9 @@
 #include "symbol.h"
 #endif
 
-Symbol::Symbol ( Symbol const &sym ) : mName { sym.mName }, mParams { sym.mParams } {
-}
 Symbol::Symbol ( std::string const &name, std::map<std::string, double> const &params ) : mName { name }, mParams { params } {
+}
+Symbol::Symbol ( Symbol const &sym ) : mName { sym.mName }, mParams { sym.mParams } {
 }
 void Symbol::setName ( std::string const &newName ) {
    mName = newName;

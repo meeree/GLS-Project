@@ -3,9 +3,6 @@
 #define PARSER_H
 #include "parser.h"
 #endif
-#ifndef vector 
-#include <vector>
-#endif
 
 #ifndef TREE_H 
 #define TREE_H 
@@ -27,19 +24,16 @@
 #define VALUE_H
 #include "../Value/value.h"
 #endif
-#ifndef SYMBOL_H
-#define SYMBOL_H
-#include "../Symbol/symbol.h"
-#endif
 
-bool TreeTableCompare::operator ()( std::pair<std::string, std::vector<std::string> > const &sym1, std::pair<std::string, std::vector<std::string> > const &sym2 ) const {
+bool TreeTableCompare::operator ()( SymbolWithoutParams const &sym1, SymbolWithoutParams const &sym2 ) const {
    std::string const &name1 { sym1.first };
    std::string const &name2 { sym2.first };
    std::vector<std::string> const &params1 { sym1.second };
    std::vector<std::string> const &params2 { sym2.second };
 
    if ( name1 == name2 && params1 == params2 ) {
-      throw "function "+name1+" defined twice with same number of parameters ";
+      std::cout<<"function "+name1+" defined twice with same number of parameters "<<std::endl;
+      exit ( EXIT_FAILURE );
    }
 
    return params1.size () < params2.size ();
@@ -55,6 +49,11 @@ Parser::~Parser () {
 }
 
 bool Parser::strCheck ( std::string const &str ) const {
+   if ( mIter == mTokenString.end () ) {
+      std::cout<<"string check failed: hit end of tokenized file without finding string '" + str + "'"<<std::endl;
+      exit ( EXIT_FAILURE );
+   }
+
    return ( ( *mIter ).isString () && ( *mIter ).getString () == str );
 }
 
@@ -71,7 +70,31 @@ void Parser::mainParse () {
 }
 
 void Parser::parseAxiom () {
-   std::cout<<(*mIter).getString ()<<std::endl;
+   while ( !strCheck (";") ) {
+      std::string name { ( *mIter ).getString () };
+      std::map<std::string, double> params;
+
+      do { 
+         std::string paramName { ( *( ++mIter ) ).getString () };
+         mIter += 2; Tree * paramArithVal { addExpr () };
+         Symbol arbSym; // Arbitrary symbol to satisfy evalTree
+         double paramVal { paramArithVal->evalTree ( arbSym ).getFloat () };
+         params[paramName] = paramVal;
+      } while ( strCheck ( ")" ) );
+
+      Symbol sym { name, params };
+      mAxiom.push_back ( sym );
+   }
+       
+}
+
+void Parser::parseConstants () {
+}
+
+void Parser::parseVariables () {
+}
+
+void Parser::parseProductions () {
 }
 
 //
@@ -83,7 +106,7 @@ void Parser::parseAxiom () {
 //      while ( ! ( ( *( ++mIter ) ).isString () && ( *mIter ).getString () == " )" ) ) {
 //         params.push_back ( ( *( ++mIter ) ).getString () );
 //      }
-//      std::pair<std::string, std::vector<std::string> > sym { name, params };
+//      SymbolWithoutParams sym { name, params };
 //      mSymbolTable.push_back ( sym );
 //   }
 //}
@@ -104,7 +127,7 @@ void Parser::parseAxiom () {
 //
 //}
 //
-//Tree * Parser::andExpr () const {
+//Tree * Parser::andExpr () {
 //   if ( ( *( ++mIter ) ).isString () && ( *mIter ).getString () == " )" ) {
 //      Value trueValue { true };
 //      Node * trueNode { new ValueNode { trueValue } };
@@ -119,7 +142,7 @@ void Parser::parseAxiom () {
 //   return topTree;
 //}
 //
-//Tree * Parser::cndExpr () const {
+//Tree * Parser::cndExpr () {
 //   Tree * leftTree { addExpr ( mIter ) };
 //   std::string const &cnd { ( *( mIter+1 ) ).getString () };
 //   if ( cnd == "<" ) {
@@ -155,7 +178,7 @@ void Parser::parseAxiom () {
 //   }
 //}
 //
-//Tree * Parser::stringExpr () const {
+//Tree * Parser::stringExpr () {
 //   std::vector<Tree*> children;
 //
 //   while ( ! ( ( *mIter ).isString () && ( *mIter ).getString () == ";" ) ) {
@@ -206,111 +229,111 @@ void Parser::parseAxiom () {
 //   Tree * symStringTree { new WrapperTree { children, symStringNode } };
 //   return symStringTree;
 //}
-//
-//Tree * Parser::addExpr () const {
-//   Tree * leftTree { mulExpr ( mIter ) };
-//   if ( ( ( *( mIter+1 ) ) ).isString () ) {
-//      std::string const &expr { ( *( mIter+1 ) ).getString () };
-//      if ( expr == "+" ) {
-//            std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//            Node * topNode { new PlusNode {} };
-//            Tree * topTree { new WrapperTree { children, topNode } };
-//            return topTree;
-//      } else if ( expr == "-" ) {
-//            std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//            Node * topNode { new MinusNode {} };
-//            Tree * topTree { new WrapperTree { children, topNode } };
-//            return topTree;
-//      }
-//   }
-//
-//   return leftTree;
-//}
-//
-//Tree * Parser::mulExpr () const {
-//   Tree * leftTree { powExpr ( mIter ) };
-//   if ( ( ( *( mIter+1 ) ) ).isString () ) {
-//      std::string const &expr { ( *( mIter+1 ) ).getString () };
-//      if ( expr == "*" ) {
-//         std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//         Node * topNode { new MulNode {} };
-//         Tree * topTree { new WrapperTree { children, topNode } };
-//         return topTree;
-//      } else if ( expr == "/" ) {
-//         std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//         Node * topNode { new DivNode {} };
-//         Tree * topTree { new WrapperTree { children, topNode } };
-//         return topTree;
-//      }
-//   }
-//
-//   return leftTree;
-//}
-//
-//Tree * Parser::powExpr () const {
-//   Tree * leftTree { brackExpr ( mIter ) };
-//   if ( ( ( *( mIter+1 ) ) ).isString () ) {
-//      std::string const &expr { ( *( mIter+1 ) ).getString () };
-//      if ( expr == "^" ) {
-//            std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//            Node * topNode { new PowNode {} };
-//            Tree * topTree { new WrapperTree { children, topNode } };
-//            return topTree;
-//      } else if ( expr == "~" ) {
-//            std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//            Node * topNode { new PowRootNode {} };
-//            Tree * topTree { new WrapperTree { children, topNode } };
-//            return topTree;
-//      }
-//   }
-//
-//   return leftTree;
-//}
-//
-//Tree * Parser::brackExpr () const {
-//   std::string const &expr {  };
-//   if ( ( *mIter ).isString () && ( *mIter ).getString () == "(" ) {
-//      Tree * leftTree { addExpr ( ++mIter ) };
-//      ++mIter;
-//      return leftTree;
-//   }
-//
-//   return staticNumExpr ( mIter );
-//}
-//
-//Tree * Parser::staticNumExpr () const {
-//   if ( ( *mIter ).isInt () ) {
-//      Value topValue { ( *mIter ).getInt () };
-//      Node * topNode { new ValueNode { topValue } };
-//      Tree * topTree { new WrapperTree { {}, topNode } };
-//      return topTree;
-//   } else if ( ( *mIter ).isFloat () ) {
-//      Value topValue { ( *mIter ).getFloat () };
-//      Node * topNode { new ValueNode { topValue } };
-//      Tree * topTree { new WrapperTree { {}, topNode } };
-//      return topTree;
-//   }
-//
-//   return dynamicNumExpr ( mIter );
-//}
-//
-//Tree * Parser::dynamicNumExpr () const {
-//   Value paramValue { ( *mIter ).getString () };
-//   Node * bottomNode { new ValueNode { paramValue } }; 
-//   Tree * bottomTree { new WrapperTree { {}, bottomNode } };
-//
-//   std::vector<Tree*> children { bottomTree };
-//   Node * topNode { new LookupNode {} };
-//   Tree * topTree { new WrapperTree { children, topNode } };
-//
-//   return topTree;
-//}
-//
+
+Tree * Parser::addExpr () {
+   Tree * leftTree { mulExpr () };
+   if ( ( *( mIter+1 ) ).isString () ) {
+      std::string const &expr { ( *( mIter+1 ) ).getString () };
+      if ( expr == "+" ) {
+            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+            Node * topNode { new PlusNode {} };
+            Tree * topTree { new WrapperTree { children, topNode } };
+            return topTree;
+      } else if ( expr == "-" ) {
+            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+            Node * topNode { new MinusNode {} };
+            Tree * topTree { new WrapperTree { children, topNode } };
+            return topTree;
+      }
+   }
+
+   return leftTree;
+}
+
+Tree * Parser::mulExpr () {
+   Tree * leftTree { powExpr () };
+   if ( ( *( mIter+1 ) ).isString () ) {
+      std::string const &expr { ( *( mIter+1 ) ).getString () };
+      if ( expr == "*" ) {
+            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+            Node * topNode { new MulNode {} };
+            Tree * topTree { new WrapperTree { children, topNode } };
+            return topTree;
+      } else if ( expr == "/" ) {
+            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+            Node * topNode { new DivNode {} };
+            Tree * topTree { new WrapperTree { children, topNode } };
+            return topTree;
+      }
+   }
+
+   return leftTree;
+}
+
+Tree * Parser::powExpr () {
+   Tree * leftTree { brackExpr () };
+   if ( ( *( mIter+1 ) ).isString () ) {
+      std::string const &expr { ( *( mIter+1 ) ).getString () };
+      if ( expr == "^" ) {
+            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+            Node * topNode { new PowNode {} };
+            Tree * topTree { new WrapperTree { children, topNode } };
+            return topTree;
+      } else if ( expr == "~" ) {
+            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+            Node * topNode { new PowRootNode {} };
+            Tree * topTree { new WrapperTree { children, topNode } };
+            return topTree;
+      }
+   }
+
+   return leftTree;
+}
+
+Tree * Parser::brackExpr () {
+   std::string const &expr {  };
+   if ( strCheck ( "(" ) ) {
+      ++mIter; Tree * leftTree { addExpr () }; ++mIter;
+      return leftTree;
+   }
+
+   return staticNumExpr ();
+}
+
+Tree * Parser::staticNumExpr () {
+   if ( ( *mIter ).isInt () ) {
+      Value topValue { ( *mIter ).getInt () };
+      Node * topNode { new ValueNode { topValue } };
+      Tree * topTree { new WrapperTree { {}, topNode } };
+      return topTree;
+   } else if ( ( *mIter ).isFloat () ) {
+      Value topValue { ( *mIter ).getFloat () };
+      Node * topNode { new ValueNode { topValue } };
+      Tree * topTree { new WrapperTree { {}, topNode } };
+      return topTree;
+   }
+
+   return dynamicNumExpr ();
+}
+
+Tree * Parser::dynamicNumExpr () {
+   Value paramValue { ( *mIter ).getString () };
+   Node * bottomNode { new ValueNode { paramValue } }; 
+   Tree * bottomTree { new WrapperTree { {}, bottomNode } };
+
+   std::vector<Tree*> children { bottomTree };
+   Node * topNode { new LookupNode {} };
+   Tree * topTree { new WrapperTree { children, topNode } };
+
+   return topTree;
+}
+
 
 int main () {
-   Tokenizer t;
    std::ifstream fl;
-   fl.open ( "../Tokenizer/fl.txt" );
+   fl.open ( "/home/jhazelden/GLS-Project/ConfigReader/fl.txt" );
    Tokenizer t;
    t.tokenizeFile ( fl );
+   Parser p { t.getTokenString () };
+   p.mainParse ();
 }

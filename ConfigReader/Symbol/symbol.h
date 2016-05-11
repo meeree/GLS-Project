@@ -4,6 +4,11 @@
 #ifndef string
 #include <string>
 #endif
+#ifndef vector
+#include <vector>
+#endif
+
+typedef std::pair<std::string, std::vector<std::string> > SymbolWithoutParams;
 
 class Symbol {
 private:

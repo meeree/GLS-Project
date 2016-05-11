@@ -39,7 +39,11 @@ Value::Value ( value_type_t const &valueType ) : mValueType { valueType } {
 Value::Value ( int const &intVal ) : mContainer { intVal }, mValueType { INT } {
 }
 int const Value::getInt () const {
-   if ( mValueType == FLOAT ) { 
+   if ( !isInt () && !isFloat () ) {
+      std::cout<<"request for int from value failed: value does not contain int or float";
+      exit ( EXIT_FAILURE );
+   }
+   if ( isFloat () ) { 
       return (int)*mContainer.mFloat;
    }
    return *mContainer.mInt;
@@ -54,7 +58,11 @@ void Value::setInt ( int const &newInt ) {
 Value::Value ( double const &floatVal ) : mContainer { floatVal }, mValueType { FLOAT } {
 }
 double const Value::getFloat () const {
-   if ( mValueType == INT ) { 
+   if ( !isFloat () && !isInt () ) {
+      std::cout<<"request for float from value failed: value does not contain float or int";
+      exit ( EXIT_FAILURE );
+   }
+   if ( isInt () ) { 
       return (double)*mContainer.mInt;
    }
    return *mContainer.mFloat;
@@ -69,6 +77,10 @@ void Value::setFloat ( double const &newFloat ) {
 Value::Value ( bool const &boolVal ) : mContainer { boolVal }, mValueType { BOOL } {
 }
 bool const Value::getBool () const {
+   if ( !isBool () ) {
+      std::cout<<"request for bool from value failed: value does not contain bool";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mBool;
 }
 bool Value::isBool () const {
@@ -81,6 +93,10 @@ void Value::setBool ( bool const &newBool ) {
 Value::Value ( std::string const &stringVal ) : mContainer { stringVal }, mValueType { STRING } {
 }
 std::string const Value::getString () const {
+   if ( !isString () ) {
+      std::cout<<"request for string from value failed: value does not contain string";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mString;
 }
 bool Value::isString () const {
@@ -93,6 +109,10 @@ void Value::setString ( std::string const &newString ) {
 Value::Value ( Symbol const &symbolVal ) : mContainer { symbolVal }, mValueType { SYMBOL } {
 }
 Symbol const Value::getSymbol () const {
+   if ( !isSymbol () ) {
+      std::cout<<"request for symbol from value failed: value does not contain symbol";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mSymbol;
 }
 bool Value::isSymbol () const {
@@ -105,6 +125,10 @@ void Value::setSymbol ( Symbol const &newSymbol ) {
 Value::Value ( std::vector<Symbol> const &symbolString ) : mContainer { symbolString }, mValueType { SYMBOL_STRING } {
 }
 std::vector<Symbol> const Value::getSymbolString () const {
+   if ( !isSymbolString () ) {
+      std::cout<<"request for symbol string from value failed: value does not contain symbol string";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mSymbolString;
 }
 bool Value::isSymbolString () const {
@@ -113,19 +137,3 @@ bool Value::isSymbolString () const {
 void Value::setSymbolString ( std::vector<Symbol> const &newSymbolString ) {
    *mContainer.mSymbolString = newSymbolString;
 }
-
-//Value::~Value () {
-//   if ( isInt () ) {
-//      delete mContainer.mInt;
-//   } else if ( isFloat () ) {
-//      delete mContainer.mFloat;
-//   } else if ( isBool () ) {
-//      delete mContainer.mBool;
-//   } else if ( isString () ) {
-//      delete mContainer.mString;
-//   } else if ( isSymbol () ) {
-//      delete mContainer.mSymbol;
-//   } else if ( isSymbolString () ) {
-//      delete mContainer.mSymbolString;
-//   }
-//}

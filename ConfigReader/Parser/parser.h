@@ -10,12 +10,16 @@
 #ifndef string
 #include <string>
 #endif
+#ifndef SYMBOL_H
+#define SYMBOL_H
+#include "../Symbol/symbol.h"
+#endif
 
 class Tree;
 class Token;
 
 struct TreeTableCompare {
-   bool operator ()( std::pair<std::string, std::vector<std::string> > const &sym1, std::pair<std::string, std::vector<std::string> > const &sym2 ) const;
+   bool operator ()( SymbolWithoutParams const &sym1, SymbolWithoutParams const &sym2 ) const;
 };
 
 class Parser {
@@ -23,8 +27,9 @@ private:
    std::vector<Token> mTokenString;
    std::vector<Token>::iterator mIter;
 
-   std::map<std::pair<std::string, std::vector<std::string> >, Tree*, TreeTableCompare> mTreeTable;
-   std::vector<std::pair<std::string, std::vector<std::string> > > mConstants; 
+   std::vector<Symbol> mAxiom;
+   std::map<SymbolWithoutParams, Tree*, TreeTableCompare> mTreeTable;
+   std::vector<SymbolWithoutParams> mConstants; 
 
    bool strCheck ( std::string const &str ) const;
 
@@ -33,15 +38,15 @@ private:
    void parseVariables ();
    void parseProductions ();
 
-   Tree * andExpr () const;
-   Tree * cndExpr () const;
-   Tree * stringExpr () const;
-   Tree * addExpr () const;
-   Tree * mulExpr () const;
-   Tree * powExpr () const;
-   Tree * brackExpr () const;
-   Tree * staticNumExpr () const;
-   Tree * dynamicNumExpr () const;
+   Tree * andExpr ();
+   Tree * cndExpr ();
+   Tree * stringExpr ();
+   Tree * addExpr ();
+   Tree * mulExpr ();
+   Tree * powExpr ();
+   Tree * brackExpr ();
+   Tree * staticNumExpr ();
+   Tree * dynamicNumExpr ();
 
 public:
    Parser ( std::vector<Token> const &tokenString );

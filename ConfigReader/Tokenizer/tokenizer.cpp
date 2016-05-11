@@ -113,6 +113,3 @@ void Tokenizer::tokenizeMisc ( std::string::iterator &iter ) {
    }
    return tokenizeString ( ++iter );
 }
-
-int main () {
-}

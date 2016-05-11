@@ -13,6 +13,10 @@ Token::TokenContainer::TokenContainer ( double const &floatTok ) : mFloat { new 
 Token::Token ( std::string const &stringTok ) : mContainer { stringTok }, mTokenType { STRING } {
 }
 std::string const &Token::getString () const {
+   if ( !isString () ) {
+      std::cout<<"request for string from token failed: token does not contain string";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mString;
 }
 bool Token::isString () const {
@@ -25,6 +29,10 @@ void Token::setString ( std::string const &newString ) {
 Token::Token ( int const &intTok ) : mContainer { intTok }, mTokenType { INT } {
 }
 int const &Token::getInt () const {
+   if ( !isInt () ) {
+      std::cout<<"request for int from token failed: token does not contain int";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mInt;
 }
 bool Token::isInt () const {
@@ -37,6 +45,10 @@ void Token::setInt ( int const &newInt ) {
 Token::Token ( double const &floatTok ) : mContainer { floatTok }, mTokenType { FLOAT } {
 }
 double const &Token::getFloat () const {
+   if ( !isFloat () ) {
+      std::cout<<"request for float from token failed: token does not contain float";
+      exit ( EXIT_FAILURE );
+   }
    return *mContainer.mFloat;
 }
 bool Token::isFloat () const {

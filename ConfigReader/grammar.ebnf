@@ -1,13 +1,14 @@
 ( * GLS grammar using EBNF metasyntax, whitespace is implied * )
 
 axiom = "AXIOM", 
-        symbolWithParams, { symbolWithParams }, ";", ;
+        symbolWithParams, { symbolWithParams }, ";" ;
 
 constants = "CONSTANTS",
-            [ symbolWithoutParams, { ",", symbolWithoutParams } ], ";", ;
+            [ symbolWithoutParams, { ",", symbolWithoutParams } ], ";" ;
 
 productions = "PRODUCTIONS",
-              [ symbolWithoutParams, "(", [ paramExpression, condition, arithmeticExpression, { ",", paramExpression, condition, arithmeticExpression } ], ")", ":=", { symbolWithRule } ], ";", ;
+              [ symbolWithoutParams, "(", [ paramExpression, condition, arithmeticExpression, { ",", paramExpression, condition, arithmeticExpression } ], ")", ":=", { symbolWithRule } ], ";",
+              "END" ;
 
 symbolWithParams = word, "(", { number }, ")" ;
 symbolWithoutParams = word, "(", { word }, ")" ;

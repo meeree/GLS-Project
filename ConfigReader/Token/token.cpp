@@ -10,12 +10,6 @@ Token::TokenContainer::TokenContainer ( int const &intTok ) : mInt { new int { i
 Token::TokenContainer::TokenContainer ( double const &floatTok ) : mFloat { new double { floatTok } } {
 }
 
-//Token::~Token () {
-//   delete mContainer.mString;
-//   delete mContainer.mInt;
-//   delete mContainer.mFloat;
-//}
-//
 Token::Token ( std::string const &stringTok ) : mContainer { stringTok }, mTokenType { STRING } {
 }
 std::string const &Token::getString () const {

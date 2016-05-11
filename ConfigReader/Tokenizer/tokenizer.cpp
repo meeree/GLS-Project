@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cctype>
 #include <cmath>
 #ifndef TOKENIZER_H
@@ -10,7 +9,7 @@ std::vector<Token> const &Tokenizer::getTokenString () const {
    return mTokenString;
 }
 
-void Tokenizer::tokenizeFile ( std::istream &fl ) {
+void Tokenizer::tokenizeFile ( std::ifstream &fl ) {
    std::string line;
    while ( std::getline ( fl, line ) ) {
       auto iter = line.begin ();
@@ -25,7 +24,7 @@ void Tokenizer::tokenizeString ( std::string::iterator &iter ) {
       return tokenizeNum ( iter );
    }
 
-   while ( std::isalpha ( * ( iter ) ) ) {
+   while ( std::isalpha ( *iter ) ) {
       val += *( iter++ );
    }
 
@@ -42,7 +41,7 @@ void Tokenizer::tokenizeNum ( std::string::iterator &iter ) {
       return tokenizeBool ( iter );
    }
 
-   while ( std::isdigit ( * ( iter ) ) ) {
+   while ( std::isdigit ( *iter ) ) {
       val += *( iter++ );
    }
 
@@ -54,11 +53,10 @@ void Tokenizer::tokenizeNum ( std::string::iterator &iter ) {
    }
 
    val += *( iter++ );
-   while ( std::isdigit ( * ( iter ) ) ) {
+   while ( std::isdigit ( *iter ) ) {
       val += *( iter++ );
    }
 
-   std::cout<<std::stod( val )<<","<<val<<std::endl;
    Token tok { std::stod ( val ) };
    mTokenString.push_back ( tok );
 
@@ -117,17 +115,4 @@ void Tokenizer::tokenizeMisc ( std::string::iterator &iter ) {
 }
 
 int main () {
-   std::ifstream fl;
-   fl.open ( "./fl.txt" );
-   Tokenizer t;
-   t.tokenizeFile ( fl );
-   for (auto const &iter: t.getTokenString () ) {
-      if ( iter.isString () ) {
-         std::cout<<iter.getString()<<",";
-      } else if ( iter.isInt () ) {
-         std::cout<<iter.getInt()<<",";
-      } else if ( iter.isFloat () ) {
-         std::cout<<iter.getFloat ()<<",";
-      }
-   }
 }

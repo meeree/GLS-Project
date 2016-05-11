@@ -1,3 +1,5 @@
+AXIOM 
+   a
 SYMTABLE
    F(t,as,potato),G(s,grep,foo);
 PRODUCTIONS

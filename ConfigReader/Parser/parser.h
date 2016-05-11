@@ -15,26 +15,36 @@ class Tree;
 class Token;
 
 struct TreeTableCompare {
-   bool operator ()( std::pair<std::string, unsigned> const &key1, std::pair<std::string, unsigned> const &key2 ) const;
+   bool operator ()( std::pair<std::string, std::vector<std::string> > const &sym1, std::pair<std::string, std::vector<std::string> > const &sym2 ) const;
 };
 
 class Parser {
 private:
-   std::map<std::pair<std::string, unsigned>, Tree*, TreeTableCompare> mTreeTable;
-   std::vector<std::pair<std::string, std::vector<std::string> > > mSymbolTable; 
+   std::vector<Token> mTokenString;
+   std::vector<Token>::iterator mIter;
+
+   std::map<std::pair<std::string, std::vector<std::string> >, Tree*, TreeTableCompare> mTreeTable;
+   std::vector<std::pair<std::string, std::vector<std::string> > > mConstants; 
+
+   bool strCheck ( std::string const &str ) const;
+
+   void parseAxiom ();
+   void parseConstants ();
+   void parseVariables ();
+   void parseProductions ();
+
+   Tree * andExpr () const;
+   Tree * cndExpr () const;
+   Tree * stringExpr () const;
+   Tree * addExpr () const;
+   Tree * mulExpr () const;
+   Tree * powExpr () const;
+   Tree * brackExpr () const;
+   Tree * staticNumExpr () const;
+   Tree * dynamicNumExpr () const;
 
 public:
-   Tree * andExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * cndExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * stringExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * addExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * mulExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * powExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * brackExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * staticNumExpr ( std::vector<Token>::iterator &iter ) const;
-   Tree * dynamicNumExpr ( std::vector<Token>::iterator &iter ) const;
-   Parser () = default;
-   void parseSymbolTable ( std::vector<Token> &tokenString );
-   Tree * parseProduction ( std::vector<Token> &tokenString );
+   Parser ( std::vector<Token> const &tokenString );
    ~Parser ();
+   void mainParse ();
 };

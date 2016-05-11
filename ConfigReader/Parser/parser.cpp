@@ -28,6 +28,15 @@
 #include <iostream>
 #endif
 
+std::map<std::string, unsigned> Parser::cndTable { 
+   std::make_pair ( "<", 0 ), 
+   std::make_pair ( ">", 1 ), 
+   std::make_pair ( "<=", 2 ), 
+   std::make_pair ( ">=", 3 ), 
+   std::make_pair ( "==", 4 ), 
+   std::make_pair ( "!=", 5 )
+};
+
 bool TreeTableCompare::operator ()( SymbolWithoutParams const &sym1, SymbolWithoutParams const &sym2 ) const {
    std::string const &name1 { sym1.first };
    std::string const &name2 { sym2.first };
@@ -68,120 +77,177 @@ void Parser::mainParse () {
    ++mIter; parseConstants (); mIter = mTokenString.begin ();
 
    while ( !strCheck ( "PRODUCTIONS" ) ) { ++mIter; }
-   ++mIter; auto iter2 = mIter; parseVariables ();
-   mIter = iter2; parseProductions ();
+   ++mIter; parseProductions (); mIter = mTokenString.begin ();
 }
 
 void Parser::parseAxiom () {
    while ( !strCheck (";") ) {
-      std::string name { ( *( mIter++ ) ).getString () };
-      std::map<std::string, double> params;
-
-      do { 
-         std::string paramName { ( *( ++mIter ) ).getString () };
-         mIter += 2; Tree * paramArithVal { addExpr () };
-         Symbol arbSym; // Arbitrary symbol to satisfy evalTree
-         double paramVal { paramArithVal->evalTree ( arbSym ).getFloat () };
-         params[paramName] = paramVal; ++mIter;
-      } while ( !strCheck ( ")" ) );
-
-      Symbol sym { name, params }; 
+      Symbol sym { symExpr () };
       mAxiom.push_back ( sym );
       ++mIter;
    }
-       
 }
 
 void Parser::parseConstants () {
+   while ( !strCheck (";") ) {
+      if ( strCheck (",") ) {
+         ++mIter;
+      }
+
+      SymbolWithoutParams symW { symWoParamsExpr () };
+      mConstants.push_back ( symW );
+      ++mIter;
+   }
 }
 
-void Parser::parseVariables () {
+Symbol Parser::symExpr () {
+   std::string name { ( *( mIter++ ) ).getString () };
+   std::map<std::string, double> params;
+
+   do { 
+      std::string paramName { ( *( ++mIter ) ).getString () };
+      mIter += 2; Tree * paramArithTree { addExpr () };
+      Symbol arbSym; // Arbitrary symbol to satisfy evalTree
+      double paramEval { paramArithTree->evalTree ( arbSym ).getFloat () };
+      params[paramName] = paramEval; ++mIter;
+   } while ( !strCheck ( ")" ) );
+
+   Symbol sym { name, params }; 
+   return sym;
+}
+
+SymbolWithoutParams Parser::symWoParamsExpr () {
+   std::string name { ( *( mIter++ ) ).getString () };
+   std::vector<std::string> paramNames;
+
+   do { 
+      std::string paramName { ( *( ++mIter ) ).getString () };
+      paramNames.push_back ( paramName ); ++mIter;
+   } while ( !strCheck ( ")" ) );
+
+   SymbolWithoutParams symW { name, paramNames };
+   return symW;
+}
+
+Tree * Parser::ruleSymExpr () {
+   std::vector<Tree*> children;
+
+   Value nameVal { ( *( mIter++ ) ).getString () };
+   Node * nameNode { new ValueNode { nameVal } };
+   Tree * nameTree { new WrapperTree { {}, nameNode } };
+   children.push_back ( nameTree );
+
+   do { 
+      Value paramNameVal { ( *( ++mIter ) ).getString () };
+      Node * paramNameNode { new ValueNode { paramNameVal } };
+      Tree * paramnameTree { new WrapperTree { {}, paramNameNode } };
+      children.push_back ( nameTree );
+
+
+      mIter += 2; Tree * paramArithTree { addExpr () };
+      children.push_back ( paramArithTree ); ++mIter;
+   } while ( !strCheck ( ")" ) );
+
+   Node * symNode { new SymbolNode {} };
+   Tree * symTree { new WrapperTree { children, symNode } };
+
+   return symTree;
+}
+
+Tree * Parser::ruleExpr () {
+   std::vector<Tree*> children {};
+   
+   while ( !strCheck ( ";" ) ) {
+      ++mIter; children.push_back ( ruleExpr () );
+   }
+
+   Node * symStrNode { new AccumulateNode {} };
+   Tree * symStrTree { new WrapperTree { children, symStrNode } };
+   
+   return symStrTree;
 }
 
 void Parser::parseProductions () {
+   while ( !strCheck ( "END" ) ) {
+      std::vector<Symbol> noRet {};
+      Node * nullNode { new ValueNode { noRet } };
+      Tree * nullTree { new WrapperTree { {}, nullNode } };
+
+      SymbolWithoutParams symW { symWoParamsExpr () };
+      ++mIter; Tree * cndTree { logicExpr () };
+      Tree * ruleTree { ruleExpr () };
+
+      Tree * prdTree { new ITETree { cndTree, ruleTree, nullTree } };
+      mTreeTable[symW] = prdTree;
+
+      ++mIter;
+   }
 }
 
-//
-//void Parser::parseSymbolTable ( std::vector<Token> &tokenString ) {
-//   auto mIter = tokenString.begin (); 
-//   while ( ! ( ( *mIter ).isString () && ( *mIter ).getString () == ";" ) ) {
-//      std::string name { ( *mIter ).getString () };
-//      std::vector<std::string> params;
-//      while ( ! ( ( *( ++mIter ) ).isString () && ( *mIter ).getString () == " )" ) ) {
-//         params.push_back ( ( *( ++mIter ) ).getString () );
-//      }
-//      SymbolWithoutParams sym { name, params };
-//      mSymbolTable.push_back ( sym );
-//   }
-//}
-//
-//Tree * Parser::parseProduction ( std::vector<Token> &tokenString ) {
-//
-//   Node * nullNode { new ValueNode { nullptr } };
-//   Tree * nullTree { new WrapperTree { {}, nullNode } };
-//
-//   auto mIter = tokenString.begin ();
-//
-//   Tree * cndTree { andExpr ( ++mIter ) };
-//   Tree * ruleTree { stringExpr ( ++mIter ) };
-//
-//   Tree * topTree { new ITETree { cndTree, ruleTree, nullTree } };
-//
-//   return topTree;
-//
-//}
-//
-//Tree * Parser::andExpr () {
-//   if ( ( *( ++mIter ) ).isString () && ( *mIter ).getString () == " )" ) {
-//      Value trueValue { true };
-//      Node * trueNode { new ValueNode { trueValue } };
-//      Tree * trueTree { new WrapperTree { {}, trueNode } };
-//      return trueTree;
-//   } 
-//
-//   Tree * leftTree { cndExpr ( ++mIter ) };
-//   Tree * rightTree { andExpr ( ++mIter ) };
-//   Tree * topTree { new AndTree { leftTree, rightTree } };
-//
-//   return topTree;
-//}
-//
-//Tree * Parser::cndExpr () {
-//   Tree * leftTree { addExpr ( mIter ) };
-//   std::string const &cnd { ( *( mIter+1 ) ).getString () };
-//   if ( cnd == "<" ) {
-//      std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//      Node * topNode { new LessNode {} };
-//      Tree * topTree { new WrapperTree { children, topNode } };
-//      return topTree;
-//   } else if ( cnd == ">" ) {
-//      std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//      Node * topNode { new GreaterNode {} };
-//      Tree * topTree { new WrapperTree { children, topNode } };
-//      return topTree;
-//   } else if ( cnd == "<=" ) {
-//      std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//      Node * topNode { new LessEqualNode {} };
-//      Tree * topTree { new WrapperTree { children, topNode } };
-//      return topTree;
-//   } else if ( cnd == ">=" ) {
-//      std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//      Node * topNode { new GreaterEqualNode {} };
-//      Tree * topTree { new WrapperTree { children, topNode } };
-//      return topTree;
-//   } else if ( cnd == "==" ) {
-//      std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//      Node * topNode { new EqualNode {} };
-//      Tree * topTree { new WrapperTree { children, topNode } };
-//      return topTree;
-//   } else if ( cnd == "!=" ) {
-//      std::vector<Tree*> children { leftTree, addExpr ( ++( ++mIter ) ) };
-//      Node * topNode { new NotEqualNode {} };
-//      Tree * topTree { new WrapperTree { children, topNode } };
-//      return topTree;
-//   }
-//}
-//
+
+Tree * Parser::logicExpr () {
+   ++mIter; Tree * leftTree { cndExpr () }; ++mIter;
+
+   if ( strCheck ( "&" ) ) {
+      Tree * rightTree { logicExpr () };
+      Tree * topTree { new AndTree { leftTree, rightTree } };
+      return topTree;
+   } else if ( strCheck ( "|" ) ) {
+      Tree * rightTree { logicExpr () };
+      Tree * topTree { new OrTree { leftTree, rightTree } };
+      return topTree;
+   } else if ( strCheck ( ")" ) ) {
+      return leftTree;
+   } else {
+      std::cerr<<"logic parse failed: undefined logical connective between conditions:, try using & or |"<<std::endl;
+      exit ( EXIT_FAILURE );
+   }
+}
+
+Tree * Parser::cndExpr () {
+   Tree * leftTree { addExpr () };
+   std::string cnd { ( *( ++mIter ) ).getString () };
+
+   ++mIter; std::vector<Tree*> children { leftTree, addExpr () };
+
+   switch ( cndTable.at ( cnd ) ) {
+      case 0: {
+         Node * topNode { new LessNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      }
+      case 1: {
+         Node * topNode { new GreaterNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      }
+      case 2: {
+         Node * topNode { new LessEqualNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      }
+      case 3: {
+         Node * topNode { new GreaterEqualNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      }
+      case 4: {
+         Node * topNode { new EqualNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      }  
+      case 5: {
+         Node * topNode { new NotEqualNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
+      }
+      default: {
+         std::cerr<<"conditon parse failed: boolean connective undefined, try using < or > or <= or >= or == or !="<<std::endl; 
+         exit ( EXIT_FAILURE );
+      }
+   }
+}
+
 //Tree * Parser::stringExpr () {
 //   std::vector<Tree*> children;
 //

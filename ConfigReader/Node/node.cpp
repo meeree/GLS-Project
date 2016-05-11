@@ -59,6 +59,7 @@ Value AccumulateNode::evalNode ( std::vector<Value > const &inVec, Symbol const 
    std::transform ( inVec.begin (), inVec.end (), symbolString.begin (), 
          [] ( Value const &val ) { return val.getSymbol (); } );
    mValue.setSymbolString ( symbolString );
+   return mValue;
 }
 
 Value SymbolNode::evalNode ( std::vector<Value > const &inVec, Symbol const &sym ) {

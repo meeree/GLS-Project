@@ -7,7 +7,7 @@ constants = "CONSTANTS",
             [ symbolWithoutParams, { ",", symbolWithoutParams } ], ";" ;
 
 productions = "PRODUCTIONS",
-              [ symbolWithoutParams, "(", [ paramExpression, condition, arithmeticExpression, { ",", paramExpression, condition, arithmeticExpression } ], ")", ":=", { symbolWithRule } ], ";",
+              [ symbolWithoutParams, "(", [ paramExpression, condition, arithmeticExpression, { logicalConnective, paramExpression, condition, arithmeticExpression } ], ")", ":=", { symbolWithRule } ], ";",
               "END" ;
 
 symbol = word, "(", word, ",", arithmeticExpression{ word, ",", arithmeticExpression }, ")" ;
@@ -23,6 +23,7 @@ subArithmeticExprssion =  [ "(" ], number, arithmeticOperator, number { number, 
 arithmeticOperator = "+" | "-" | "*" | "/" | "^" | "~" ;
 
 condition = "<" | ">" | "<=" | ">=" | "=" | "!=" ;
+logicalConnective = "&" | "|";
 word = letter, { letter } ;
 
 number = ["-"], digit not zero, { digit }, [".", { digit } ] ;

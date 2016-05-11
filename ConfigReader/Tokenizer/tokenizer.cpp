@@ -68,6 +68,13 @@ void Tokenizer::tokenizeBool ( std::string::iterator &iter ) {
    // , ; 
 
    switch ( *iter ) {
+      case '&': case '|': { 
+         std::string val { *( iter++ ) };
+         Token tok { val };
+         mTokenString.push_back ( tok );
+
+         return tokenizeString ( iter );
+      }
       case '>': case '<': {
          std::string val { "" };
          if ( *( iter+1 ) == '=' ) {
@@ -82,7 +89,6 @@ void Tokenizer::tokenizeBool ( std::string::iterator &iter ) {
 
          return tokenizeString ( iter );
       }
-
       case '=': case '!': case ':': {
          if ( *( iter+1 ) == '=' ) {
             std::string val { "" };

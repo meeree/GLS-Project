@@ -47,3 +47,13 @@ Value AndTree::evalTree ( Symbol const &sym ) const {
    } 
    return leftEval;
 }
+
+OrTree::OrTree ( Tree * const &leftTree, Tree * const &rightTree ) : Tree { { leftTree, rightTree }, new SimpleNode {} } {
+}
+Value OrTree::OrTree::evalTree ( Symbol const &sym ) const {
+   Value leftEval { mChildren[0]->evalTree ( sym ) };
+   if ( leftEval.getBool () ) {
+      return leftEval;
+   } 
+   return mChildren[1]->evalTree ( sym );
+}

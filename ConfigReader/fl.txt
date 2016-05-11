@@ -1,5 +1,7 @@
 AXIOM 
-   a(t,1);
+   a(g,2,s,1) joe (potato, (2.+10.)^6.28 ,smoe,50.);
+CONSTANTS
+   joe(potato,smoe), chick (f ,t) ;
 PRODUCTIONS
-   F(t,as,potato)(t>5,as*t>=potato,potato==potato):=G(t/2,(as+2)^3.28,potato);
+   a(g,s) (s> 10 & g<s*2):= joe (potato ,s/2,  smoe, 10);
 END

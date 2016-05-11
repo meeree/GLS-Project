@@ -24,6 +24,8 @@ struct TreeTableCompare {
 
 class Parser {
 private:
+   static std::map<std::string, unsigned> cndTable;
+
    std::vector<Token> mTokenString;
    std::vector<Token>::iterator mIter;
 
@@ -35,12 +37,16 @@ private:
 
    void parseAxiom ();
    void parseConstants ();
-   void parseVariables ();
    void parseProductions ();
 
-   Tree * andExpr ();
+   Symbol symExpr ();
+   SymbolWithoutParams symWoParamsExpr ();
+
+   Tree * ruleExpr ();
+   Tree * ruleSymExpr ();
+   Tree * logicExpr ();
    Tree * cndExpr ();
-   Tree * stringExpr ();
+
    Tree * addExpr ();
    Tree * mulExpr ();
    Tree * powExpr ();

@@ -33,3 +33,9 @@ public:
    AndTree ( Tree * const &leftTree, Tree * const &rightTree );
    Value evalTree ( Symbol const &sym ) const;
 };
+
+class OrTree : public Tree {
+public:
+   OrTree ( Tree * const &leftTree, Tree * const &rightTree );
+   Value evalTree ( Symbol const &sym ) const;
+};

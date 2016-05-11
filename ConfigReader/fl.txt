@@ -1,5 +1,5 @@
 AXIOM 
-   a
+   a(t,1);
 PRODUCTIONS
    F(t,as,potato)(t>5,as*t>=potato,potato==potato):=G(t/2,(as+2)^3.28,potato);
 END

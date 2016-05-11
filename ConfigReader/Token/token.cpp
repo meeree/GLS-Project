@@ -3,6 +3,10 @@
 #include "token.h"
 #endif
 
+#ifndef iostream
+#include <iostream>
+#endif
+
 Token::TokenContainer::TokenContainer ( std::string const &stringTok ) : mString { new std::string { stringTok } } {
 }
 Token::TokenContainer::TokenContainer ( int const &intTok ) : mInt { new int { intTok } } {
@@ -14,7 +18,7 @@ Token::Token ( std::string const &stringTok ) : mContainer { stringTok }, mToken
 }
 std::string const &Token::getString () const {
    if ( !isString () ) {
-      std::cout<<"request for string from token failed: token does not contain string";
+      std::cerr<<"request for string from token failed: token does not contain string";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mString;
@@ -30,7 +34,7 @@ Token::Token ( int const &intTok ) : mContainer { intTok }, mTokenType { INT } {
 }
 int const &Token::getInt () const {
    if ( !isInt () ) {
-      std::cout<<"request for int from token failed: token does not contain int";
+      std::cerr<<"request for int from token failed: token does not contain int";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mInt;
@@ -46,7 +50,7 @@ Token::Token ( double const &floatTok ) : mContainer { floatTok }, mTokenType { 
 }
 double const &Token::getFloat () const {
    if ( !isFloat () ) {
-      std::cout<<"request for float from token failed: token does not contain float";
+      std::cerr<<"request for float from token failed: token does not contain float";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mFloat;

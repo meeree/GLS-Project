@@ -1,4 +1,3 @@
-#include <iostream>
 #ifndef PARSER_H
 #define PARSER_H
 #include "parser.h"
@@ -25,6 +24,10 @@
 #include "../Value/value.h"
 #endif
 
+#ifndef iostream
+#include <iostream>
+#endif
+
 bool TreeTableCompare::operator ()( SymbolWithoutParams const &sym1, SymbolWithoutParams const &sym2 ) const {
    std::string const &name1 { sym1.first };
    std::string const &name2 { sym2.first };
@@ -32,7 +35,7 @@ bool TreeTableCompare::operator ()( SymbolWithoutParams const &sym1, SymbolWitho
    std::vector<std::string> const &params2 { sym2.second };
 
    if ( name1 == name2 && params1 == params2 ) {
-      std::cout<<"function "+name1+" defined twice with same number of parameters "<<std::endl;
+      std::cerr<<"function "+name1+" defined twice with same number of parameters "<<std::endl;
       exit ( EXIT_FAILURE );
    }
 
@@ -50,7 +53,7 @@ Parser::~Parser () {
 
 bool Parser::strCheck ( std::string const &str ) const {
    if ( mIter == mTokenString.end () ) {
-      std::cout<<"string check failed: hit end of tokenized file without finding string '" + str + "'"<<std::endl;
+      std::cerr<<"string check failed: hit end of tokenized file without finding string '" + str + "'"<<std::endl;
       exit ( EXIT_FAILURE );
    }
 
@@ -71,7 +74,7 @@ void Parser::mainParse () {
 
 void Parser::parseAxiom () {
    while ( !strCheck (";") ) {
-      std::string name { ( *mIter ).getString () };
+      std::string name { ( *( mIter++ ) ).getString () };
       std::map<std::string, double> params;
 
       do { 
@@ -79,11 +82,12 @@ void Parser::parseAxiom () {
          mIter += 2; Tree * paramArithVal { addExpr () };
          Symbol arbSym; // Arbitrary symbol to satisfy evalTree
          double paramVal { paramArithVal->evalTree ( arbSym ).getFloat () };
-         params[paramName] = paramVal;
-      } while ( strCheck ( ")" ) );
+         params[paramName] = paramVal; ++mIter;
+      } while ( !strCheck ( ")" ) );
 
-      Symbol sym { name, params };
+      Symbol sym { name, params }; 
       mAxiom.push_back ( sym );
+      ++mIter;
    }
        
 }
@@ -291,7 +295,6 @@ Tree * Parser::powExpr () {
 }
 
 Tree * Parser::brackExpr () {
-   std::string const &expr {  };
    if ( strCheck ( "(" ) ) {
       ++mIter; Tree * leftTree { addExpr () }; ++mIter;
       return leftTree;

@@ -2,10 +2,16 @@
 #define VALUE_H
 #include "value.h"
 #endif
+
 #ifndef SYMBOL_H
 #define SYMBOL_H
 #include "../Symbol/symbol.h"
 #endif
+
+#ifndef iostream
+#include <iostream>
+#endif
+
 
 Value::ValueContainer::ValueContainer ( int const &intVal ) : mInt { new int { intVal } } {
 }
@@ -40,7 +46,7 @@ Value::Value ( int const &intVal ) : mContainer { intVal }, mValueType { INT } {
 }
 int const Value::getInt () const {
    if ( !isInt () && !isFloat () ) {
-      std::cout<<"request for int from value failed: value does not contain int or float";
+      std::cerr<<"request for int from value failed: value does not contain int or float";
       exit ( EXIT_FAILURE );
    }
    if ( isFloat () ) { 
@@ -59,7 +65,7 @@ Value::Value ( double const &floatVal ) : mContainer { floatVal }, mValueType { 
 }
 double const Value::getFloat () const {
    if ( !isFloat () && !isInt () ) {
-      std::cout<<"request for float from value failed: value does not contain float or int";
+      std::cerr<<"request for float from value failed: value does not contain float or int";
       exit ( EXIT_FAILURE );
    }
    if ( isInt () ) { 
@@ -78,7 +84,7 @@ Value::Value ( bool const &boolVal ) : mContainer { boolVal }, mValueType { BOOL
 }
 bool const Value::getBool () const {
    if ( !isBool () ) {
-      std::cout<<"request for bool from value failed: value does not contain bool";
+      std::cerr<<"request for bool from value failed: value does not contain bool";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mBool;
@@ -94,7 +100,7 @@ Value::Value ( std::string const &stringVal ) : mContainer { stringVal }, mValue
 }
 std::string const Value::getString () const {
    if ( !isString () ) {
-      std::cout<<"request for string from value failed: value does not contain string";
+      std::cerr<<"request for string from value failed: value does not contain string";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mString;
@@ -110,7 +116,7 @@ Value::Value ( Symbol const &symbolVal ) : mContainer { symbolVal }, mValueType 
 }
 Symbol const Value::getSymbol () const {
    if ( !isSymbol () ) {
-      std::cout<<"request for symbol from value failed: value does not contain symbol";
+      std::cerr<<"request for symbol from value failed: value does not contain symbol";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mSymbol;
@@ -126,7 +132,7 @@ Value::Value ( std::vector<Symbol> const &symbolString ) : mContainer { symbolSt
 }
 std::vector<Symbol> const Value::getSymbolString () const {
    if ( !isSymbolString () ) {
-      std::cout<<"request for symbol string from value failed: value does not contain symbol string";
+      std::cerr<<"request for symbol string from value failed: value does not contain symbol string";
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mSymbolString;

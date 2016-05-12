@@ -22,4 +22,5 @@ public:
    void addParam ( std::string const &paramName, double const &paramVal );
    std::string getName () const;
    double getParam ( std::string const &key ) const;
+   bool check ( SymbolWithoutParams const &symW ) const;
 };

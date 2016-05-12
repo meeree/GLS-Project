@@ -1,0 +1,7 @@
+AXIOM 
+   a(g,1,s,12) joe(potato,(2.+10.)^6.28,smoe,50.);
+CONSTANTS
+   joe(potato,smoe),chick(f,t);
+PRODUCTIONS
+   a(g,s)(s> 10 & g<s*2):=joe(potato,s/2,smoe,10);
+END

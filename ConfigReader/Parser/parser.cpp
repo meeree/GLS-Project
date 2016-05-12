@@ -140,8 +140,8 @@ Tree * Parser::ruleSymExpr () {
    do { 
       Value paramNameVal { ( *( ++mIter ) ).getString () };
       Node * paramNameNode { new ValueNode { paramNameVal } };
-      Tree * paramnameTree { new WrapperTree { {}, paramNameNode } };
-      children.push_back ( nameTree );
+      Tree * paramNameTree { new WrapperTree { {}, paramNameNode } };
+      children.push_back ( paramNameTree );
 
 
       mIter += 2; Tree * paramArithTree { addExpr () };
@@ -150,6 +150,7 @@ Tree * Parser::ruleSymExpr () {
 
    Node * symNode { new SymbolNode {} };
    Tree * symTree { new WrapperTree { children, symNode } };
+   Symbol sym;
 
    return symTree;
 }
@@ -157,9 +158,13 @@ Tree * Parser::ruleSymExpr () {
 Tree * Parser::ruleExpr () {
    std::vector<Tree*> children {};
    
+   ++mIter;
    while ( !strCheck ( ";" ) ) {
-      ++mIter; children.push_back ( ruleExpr () );
+      ++mIter; 
+      Tree * ruleSymTree { ruleSymExpr () }; 
+      children.push_back ( ruleSymTree ); ++mIter; 
    }
+
 
    Node * symStrNode { new AccumulateNode {} };
    Tree * symStrTree { new WrapperTree { children, symStrNode } };
@@ -247,58 +252,6 @@ Tree * Parser::cndExpr () {
       }
    }
 }
-
-//Tree * Parser::stringExpr () {
-//   std::vector<Tree*> children;
-//
-//   while ( ! ( ( *mIter ).isString () && ( *mIter ).getString () == ";" ) ) {
-//      std::string name { ( *mIter ).getString () };
-//      Value const &nameValue { name };
-//      Node * nameNode { new ValueNode { nameValue } };
-//      Tree * nameTree { new WrapperTree { {}, nameNode } };
-//      std::vector<Tree*> symChildren { nameTree };
-//
-//      int paramCount { 0 };
-//      auto mIter2 = mIter;
-//      while ( true ) {
-//         ++paramCount;
-//         while ( ! ( ( *( ++mIter2 ) ).isString () && ( *mIter2 ).getString () == "," ) ) {
-//            if ( ( *( ++mIter2 ) ).isString () && ( *mIter2 ).getString () == " )" ) { 
-//               break;
-//            }
-//            ++mIter2;
-//         }
-//      }
-//
-//      std::vector<std::string> params;
-//      for ( auto const &sym: mSymbolTable ) {
-//         if ( sym.first == name && sym.second.size () == paramCount ) {
-//            params = sym.second;
-//         }
-//      }
-//
-//      if ( params.size () == 0 ) {
-//         throw "Error in stringExpr function while parsing params";
-//      }
-//
-//      auto paramIt = params.begin ();
-//      while ( ! ( ( *( ++mIter ) ).isString () && ( *mIter ).getString () == " )" ) ) {
-//         Value const &paramValue { * ( paramIt++ ) };
-//         Node * paramNode { new ValueNode { paramValue } };
-//         Tree * paramTree { new WrapperTree { {}, paramNode } };
-//         symChildren.push_back ( paramTree );
-//         symChildren.push_back ( addExpr ( ++mIter ) );
-//      }
-//
-//      Node * symNode { new SymbolNode {} };
-//      Tree * symTree { new WrapperTree { symChildren, symNode } };
-//      children.push_back ( symTree );
-//   }
-//
-//   Node * symStringNode { new AccumulateNode {} };
-//   Tree * symStringTree { new WrapperTree { children, symStringNode } };
-//   return symStringTree;
-//}
 
 Tree * Parser::addExpr () {
    Tree * leftTree { mulExpr () };
@@ -397,12 +350,12 @@ Tree * Parser::dynamicNumExpr () {
    return topTree;
 }
 
-
-int main () {
-   std::ifstream fl;
-   fl.open ( "/home/jhazelden/GLS-Project/ConfigReader/fl.txt" );
-   Tokenizer t;
-   t.tokenizeFile ( fl );
-   Parser p { t.getTokenString () };
-   p.mainParse ();
+std::vector<Symbol> Parser::getAxiom () const {
+   return mAxiom;
+}
+std::map<SymbolWithoutParams, Tree*, TreeTableCompare> Parser::getTreeTable () const {
+   return mTreeTable;
+}
+std::vector<SymbolWithoutParams> Parser::getConstants () const {
+   return mConstants;
 }

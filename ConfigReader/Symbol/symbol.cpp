@@ -7,12 +7,6 @@
 Symbol::Symbol ( std::string const &name, std::map<std::string, double> const &params ) : mName { name }, mParams { params } {
 }
 Symbol::Symbol ( Symbol const &sym ) : mName { sym.mName }, mParams { sym.mParams } {
-   std::cout<<"name: "<<sym.mName<<std::endl;
-   std::cout<<"params: ";
-   for (auto const &p: mParams) {
-      std::cout<<p.first<<":"<<p.second<<",";
-   }
-   std::cout<<std::endl;
 }
 void Symbol::setName ( std::string const &newName ) {
    mName = newName;
@@ -25,4 +19,18 @@ std::string Symbol::getName () const {
 }
 double Symbol::getParam ( std::string const &key ) const {
    return mParams.at ( key );
+}
+bool Symbol::check ( SymbolWithoutParams const &symW ) const {
+   if ( getName () != symW.first ) {
+      return false;
+   } 
+   if ( mParams.size() != symW.second.size() ) {
+      return false;
+   }
+   for ( auto const &key: symW.second ) {
+      if ( mParams.find ( key ) == mParams.end () ) {
+         return false;
+      }
+   }
+   return true;
 }

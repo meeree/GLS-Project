@@ -58,4 +58,7 @@ public:
    Parser ( std::vector<Token> const &tokenString );
    ~Parser ();
    void mainParse ();
+   std::vector<Symbol> getAxiom () const;
+   std::map<SymbolWithoutParams, Tree*, TreeTableCompare> getTreeTable () const;
+   std::vector<SymbolWithoutParams> getConstants () const; 
 };

@@ -21,6 +21,7 @@ Value::ValueContainer::ValueContainer ( bool const &boolVal ) : mBool { new bool
 }
 Value::ValueContainer::ValueContainer ( std::string const &stringVal ) : mString { new std::string { stringVal } } {
 }
+
 Value::ValueContainer::ValueContainer ( Symbol const &symbolVal ) : mSymbol { new Symbol { symbolVal } } {
 }
 Value::ValueContainer::ValueContainer ( std::vector<Symbol> const &symbolString ) : mSymbolString { new std::vector<Symbol> { symbolString } } {

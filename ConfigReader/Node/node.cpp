@@ -1,3 +1,4 @@
+#include <iostream>
 #ifndef NODE_H
 #define NODE_H
 #include "node.h"
@@ -55,7 +56,7 @@ Value LookupNode::evalNode ( std::vector<Value > const &inVec, Symbol const &sym
 }
 
 Value AccumulateNode::evalNode ( std::vector<Value > const &inVec, Symbol const &sym ) {
-   std::vector<Symbol> symbolString;
+   std::vector<Symbol> symbolString ( inVec.size () );
    std::transform ( inVec.begin (), inVec.end (), symbolString.begin (), 
          [] ( Value const &val ) { return val.getSymbol (); } );
    mValue.setSymbolString ( symbolString );

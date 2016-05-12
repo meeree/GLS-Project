@@ -65,3 +65,16 @@ void LSystem::update () {
    updateSpecific ( mString1, mString2 );
    mString1.clear ();
 }
+
+void LSystem::printString () const {
+   if ( mString1.size() == 0 ) {
+      for ( auto const &sym: mString2 ) {
+         std::cout<<sym.getName();
+      }
+      return;
+   } 
+
+   for ( auto const &sym: mString1 ) {
+      std::cout<<sym.getName();
+   }
+}

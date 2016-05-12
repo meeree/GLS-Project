@@ -1,7 +1,8 @@
 AXIOM 
-   a(g,1,s,12) joe(potato,(2.+10.)^6.28,smoe,50.);
+   F(t,1.5,s,10)G(t,0.3,s,10);
 CONSTANTS
-   joe(potato,smoe),chick(f,t);
+   P(t),M(t);
 PRODUCTIONS
-   a(g,s)(s> 10 & g<s*2):=joe(potato,s/2,smoe,10);
+   F(t,s)(t>3):=F(t/2, s/3)M(t)G(s/2, t/3)P(s);
+   G(t,s)(s>3):=G(s/2, t/3)P(t)F(s/2, t/3)M(t);
 END

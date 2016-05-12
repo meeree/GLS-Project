@@ -44,4 +44,5 @@ int main () {
    p.mainParse ();
    LSystem l { createLsys ( p ) };   
    l.update (); 
+//      l.printString ();
 }

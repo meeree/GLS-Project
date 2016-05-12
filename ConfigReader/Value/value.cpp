@@ -47,7 +47,7 @@ Value::Value ( int const &intVal ) : mContainer { intVal }, mValueType { INT } {
 }
 int const Value::getInt () const {
    if ( !isInt () && !isFloat () ) {
-      std::cerr<<"request for int from value failed: value does not contain int or float";
+      std::cerr<<"request for int from value failed: value does not contain int or float"<<std::endl;
       exit ( EXIT_FAILURE );
    }
    if ( isFloat () ) { 
@@ -66,7 +66,7 @@ Value::Value ( double const &floatVal ) : mContainer { floatVal }, mValueType { 
 }
 double const Value::getFloat () const {
    if ( !isFloat () && !isInt () ) {
-      std::cerr<<"request for float from value failed: value does not contain float or int";
+      std::cerr<<"request for float from value failed: value does not contain float or int"<<std::endl;
       exit ( EXIT_FAILURE );
    }
    if ( isInt () ) { 
@@ -85,7 +85,7 @@ Value::Value ( bool const &boolVal ) : mContainer { boolVal }, mValueType { BOOL
 }
 bool const Value::getBool () const {
    if ( !isBool () ) {
-      std::cerr<<"request for bool from value failed: value does not contain bool";
+      std::cerr<<"request for bool from value failed: value does not contain bool"<<std::endl;
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mBool;
@@ -101,7 +101,7 @@ Value::Value ( std::string const &stringVal ) : mContainer { stringVal }, mValue
 }
 std::string const Value::getString () const {
    if ( !isString () ) {
-      std::cerr<<"request for string from value failed: value does not contain string";
+      std::cerr<<"request for string from value failed: value does not contain string"<<std::endl;
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mString;
@@ -117,7 +117,7 @@ Value::Value ( Symbol const &symbolVal ) : mContainer { symbolVal }, mValueType 
 }
 Symbol const Value::getSymbol () const {
    if ( !isSymbol () ) {
-      std::cerr<<"request for symbol from value failed: value does not contain symbol";
+      std::cerr<<"request for symbol from value failed: value does not contain symbol"<<std::endl;
       exit ( EXIT_FAILURE );
    }
    return *mContainer.mSymbol;

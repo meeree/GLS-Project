@@ -106,6 +106,7 @@ Symbol Parser::symExpr () {
 
    do { 
       std::string paramName { ( *( ++mIter ) ).getString () };
+      std::cout<<paramName<<std::endl;
       mIter += 2; Tree * paramArithTree { addExpr () };
       Symbol arbSym; // Arbitrary symbol to satisfy evalTree
       double paramEval { paramArithTree->evalTree ( arbSym ).getFloat () };
@@ -158,9 +159,8 @@ Tree * Parser::ruleSymExpr () {
 Tree * Parser::ruleExpr () {
    std::vector<Tree*> children {};
    
-   ++mIter;
+   mIter += 2;
    while ( !strCheck ( ";" ) ) {
-      ++mIter; 
       Tree * ruleSymTree { ruleSymExpr () }; 
       children.push_back ( ruleSymTree ); ++mIter; 
    }
@@ -186,6 +186,7 @@ void Parser::parseProductions () {
       mTreeTable[symW] = prdTree;
 
       ++mIter;
+      std::cout<<(*mIter).getString()<<std::endl;
    }
 }
 
@@ -258,15 +259,15 @@ Tree * Parser::addExpr () {
    if ( ( *( mIter+1 ) ).isString () ) {
       std::string const &expr { ( *( mIter+1 ) ).getString () };
       if ( expr == "+" ) {
-            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
-            Node * topNode { new PlusNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+         mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+         Node * topNode { new PlusNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       } else if ( expr == "-" ) {
-            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
-            Node * topNode { new MinusNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+         mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+         Node * topNode { new MinusNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       }
    }
 
@@ -278,15 +279,15 @@ Tree * Parser::mulExpr () {
    if ( ( *( mIter+1 ) ).isString () ) {
       std::string const &expr { ( *( mIter+1 ) ).getString () };
       if ( expr == "*" ) {
-            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
-            Node * topNode { new MulNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+         mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+         Node * topNode { new MulNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       } else if ( expr == "/" ) {
-            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
-            Node * topNode { new DivNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+         mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+         Node * topNode { new DivNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       }
    }
 
@@ -298,15 +299,15 @@ Tree * Parser::powExpr () {
    if ( ( *( mIter+1 ) ).isString () ) {
       std::string const &expr { ( *( mIter+1 ) ).getString () };
       if ( expr == "^" ) {
-            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
-            Node * topNode { new PowNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+         mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+         Node * topNode { new PowNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       } else if ( expr == "~" ) {
-            mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
-            Node * topNode { new PowRootNode {} };
-            Tree * topTree { new WrapperTree { children, topNode } };
-            return topTree;
+         mIter += 2; std::vector<Tree*> children { leftTree, addExpr () };
+         Node * topNode { new PowRootNode {} };
+         Tree * topTree { new WrapperTree { children, topNode } };
+         return topTree;
       }
    }
 

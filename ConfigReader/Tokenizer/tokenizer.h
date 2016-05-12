@@ -1,14 +1,9 @@
-#ifndef fstream
-#include <fstream>
-#endif
-#ifndef vector
-#include <vector>
-#endif
-#ifndef TOKEN_H
-#define TOKEN_H
-#include "../Token/token.h"
-#endif
+#ifndef __TOKENIZER_H_INCLUDED__
+#define __TOKENIZER_H_INCLUDED__
 
+#include "../Token/token.h"
+#include <fstream>
+#include <vector>
 
 class Tokenizer {
 private:
@@ -24,3 +19,5 @@ public:
    void tokenizeFile ( std::ifstream &fl );
    std::vector<Token> const &getTokenString () const;
 };
+
+#endif

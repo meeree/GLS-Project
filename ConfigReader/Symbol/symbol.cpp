@@ -1,8 +1,5 @@
-#include <iostream>
-#ifndef SYMBOL_H
-#define SYMBOL_H
 #include "symbol.h"
-#endif
+#include <iostream>
 
 Symbol::Symbol ( std::string const &name, std::map<std::string, double> const &params ) : mName { name }, mParams { params } {
 }
@@ -27,10 +24,22 @@ bool Symbol::check ( SymbolWithoutParams const &symW ) const {
    if ( mParams.size() != symW.second.size() ) {
       return false;
    }
-   for ( auto const &key: symW.second ) {
-      if ( mParams.find ( key ) == mParams.end () ) {
+   for ( auto const &paramName: symW.second ) {
+      if ( mParams.find ( paramName ) == mParams.end () ) {
          return false;
       }
    }
    return true;
+}
+void Symbol::print () const {
+   std::cout<<mName<<'(';
+   int i { 0 };
+   for ( auto const &param: mParams ) {
+      std::cout<<param.second;
+      if ( i < mParams.size () - 1 ) {
+         std::cout<<',';
+      }
+      ++i;
+   }
+   std::cout<<')';
 }

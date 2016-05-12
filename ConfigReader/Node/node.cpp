@@ -1,18 +1,7 @@
-#include <iostream>
-#ifndef NODE_H
-#define NODE_H
 #include "node.h"
-#endif
-#ifndef cmath
-#include <cmath>
-#endif
-#ifndef algorithm
-#include <algorithm>
-#endif
-#ifndef SYMBOL_H
-#define SYMBOL_H
 #include "../Symbol/symbol.h"
-#endif
+#include <cmath>
+#include <algorithm>
 
 //CONSTRUCTORS 
 

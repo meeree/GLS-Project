@@ -1,15 +1,12 @@
-#ifndef SYMBOL_H
-#define SYMBOL_H
-#include "../ConfigReader/Symbol/symbol.h"
-#endif
-#ifndef PARSER_H
-#define PARSER_H
-#include "../ConfigReader/Parser/parser.h"
-#endif
+#ifndef __LSYSTEM_H_INCLUDED__
+#define __LSYSTEM_H_INCLUDED__
 
-#ifndef vector
+#include "../ConfigReader/Symbol/symbol.h"
+#include "../ConfigReader/Compare/compare.h"
 #include <vector>
-#endif
+
+class Tree;
+struct TreeTableCompare;
 
 class LSystem {
 private:
@@ -27,4 +24,7 @@ public:
    LSystem ( std::vector<Symbol> const &axiom, std::map<SymbolWithoutParams, Tree*, TreeTableCompare> const &treeTable, std::vector<SymbolWithoutParams> const &constants ); 
    void update ();
    void printString () const;
+   ~LSystem ();
 };
+
+#endif

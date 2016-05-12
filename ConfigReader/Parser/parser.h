@@ -1,26 +1,16 @@
-#ifndef map
+#ifndef _PARSER__H_INCLUDED__
+#define _PARSER__H_INCLUDED__
+
 #include <map>
-#endif
-#ifndef vector
 #include <vector>
-#endif
-#ifndef utility
 #include <utility>
-#endif
-#ifndef string
 #include <string>
-#endif
-#ifndef SYMBOL_H
-#define SYMBOL_H
 #include "../Symbol/symbol.h"
-#endif
+#include "../Compare/compare.h"
 
 class Tree;
+struct TreeTableCompare;
 class Token;
-
-struct TreeTableCompare {
-   bool operator ()( SymbolWithoutParams const &sym1, SymbolWithoutParams const &sym2 ) const;
-};
 
 class Parser {
 private:
@@ -55,6 +45,7 @@ private:
    Tree * dynamicNumExpr ();
 
 public:
+   Parser () = default;
    Parser ( std::vector<Token> const &tokenString );
    ~Parser ();
    void mainParse ();
@@ -62,3 +53,5 @@ public:
    std::map<SymbolWithoutParams, Tree*, TreeTableCompare> getTreeTable () const;
    std::vector<SymbolWithoutParams> getConstants () const; 
 };
+
+#endif

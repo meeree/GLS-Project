@@ -1,16 +1,7 @@
-#ifndef VALUE_H
-#define VALUE_H
 #include "value.h"
-#endif
-
-#ifndef SYMBOL_H
-#define SYMBOL_H
+#include <string>
 #include "../Symbol/symbol.h"
-#endif
-
-#ifndef iostream
 #include <iostream>
-#endif
 
 
 Value::ValueContainer::ValueContainer ( int const &intVal ) : mInt { new int { intVal } } {

@@ -1,12 +1,8 @@
-#ifndef string
-#include <string>
-#endif
-#ifndef vector
+#ifndef _VALUE__H_INCLUDED__
+#define _VALUE__H_INCLUDED__
+
 #include <vector>
-#endif
-#ifndef memory
 #include <memory>
-#endif
 
 class Symbol;
 
@@ -69,5 +65,6 @@ public:
    bool isSymbolString () const; 
    void setSymbolString ( std::vector<Symbol> const &newSymbolString );
 
-//   ~Value ();
 };
+
+#endif

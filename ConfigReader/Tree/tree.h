@@ -1,6 +1,7 @@
-#ifndef vector 
+#ifndef __TREE_H_INCLUDED__
+#define __TREE_H_INCLUDED__
+
 #include <vector>
-#endif
 
 class Node;
 class Value;
@@ -39,3 +40,5 @@ public:
    OrTree ( Tree * const &leftTree, Tree * const &rightTree );
    Value evalTree ( Symbol const &sym ) const;
 };
+
+#endif

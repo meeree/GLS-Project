@@ -1,15 +1,6 @@
-#include <iostream>
-#ifndef TREE_H
-#define TREE_H
 #include "tree.h"
-#endif
-#ifndef algorithm
-#include <algorithm>
-#endif
-#ifndef NODE_H
-#define NODE_H
 #include "../Node/node.h"
-#endif
+#include <algorithm>
 
 Tree::Tree ( std::vector<Tree * > const &children, Node * const &root ) : mChildren { children }, mRoot { root } {
 }

@@ -1,9 +1,7 @@
+#include "tokenizer.h"
+#include <string>
 #include <cctype>
 #include <cmath>
-#ifndef TOKENIZER_H
-#define TOKENIZER_H
-#include "tokenizer.h"
-#endif
 
 std::vector<Token> const &Tokenizer::getTokenString () const {
    return mTokenString;

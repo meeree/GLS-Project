@@ -3,6 +3,6 @@ AXIOM
 CONSTANTS
    P(t),M(t);
 PRODUCTIONS
-   F(t,s)(t>3):=F(t/2, s/3)M(t)G(s/2, t/3)P(s);
-   G(t,s)(s>3):=G(s/2, t/3)P(t)F(s/2, t/3)M(t);
+   F(t,s)(t>3):=F(t,t/2, s,s/3) M(t,t) G(t,s/2, s,t/3) P(t,s);
+   G(t,s)(s>3):=G(t,s/2, s,t/3) P(t,t) F(t,s/2, s,t/3) M(t,t);
 END

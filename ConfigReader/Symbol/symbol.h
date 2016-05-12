@@ -1,12 +1,9 @@
-#ifndef map
+#ifndef __SYMBOL_H_INCLUDED__
+#define __SYMBOL_H_INCLUDED__
+
 #include <map>
-#endif
-#ifndef string
 #include <string>
-#endif
-#ifndef vector
 #include <vector>
-#endif
 
 typedef std::pair<std::string, std::vector<std::string> > SymbolWithoutParams;
 
@@ -23,4 +20,7 @@ public:
    std::string getName () const;
    double getParam ( std::string const &key ) const;
    bool check ( SymbolWithoutParams const &symW ) const;
+   void print () const;
 };
+
+#endif

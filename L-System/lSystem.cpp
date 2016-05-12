@@ -1,18 +1,7 @@
-#ifndef iostream 
-#include <iostream>
-#endif
-#ifndef LSYSTEM_H
-#define LSYSTEM_H
 #include "lSystem.h"
-#endif
-#ifndef TREE_H
-#define TREE_H
 #include "../ConfigReader/Tree/tree.h"
-#endif
-#ifndef VALUE_H
-#define VALUE_H
 #include "../ConfigReader/Value/value.h"
-#endif
+#include <iostream>
 
 LSystem::LSystem ( std::vector<Symbol> const &axiom, std::map<SymbolWithoutParams, Tree*, TreeTableCompare> const &treeTable, std::vector<SymbolWithoutParams> const &constants ) : mString1 { axiom }, mTreeTable { treeTable }, mConstants { constants } {
 }
@@ -30,11 +19,10 @@ bool LSystem::constFill ( Symbol const &sym, std::vector<Symbol> &str2 ) {
 bool LSystem::variableFill ( Symbol const &sym, std::vector<Symbol> &str2 ) {
    for ( auto const &symTreePair: mTreeTable ) {
       SymbolWithoutParams const &symW = symTreePair.first;
-      std::cout<<symW.first<<std::endl;
       Tree * const &symTree = symTreePair.second;
       if ( sym.check ( symW ) ) {
-         for ( auto const &symPush: ( symTree->evalTree ( sym ) ).getSymbolString () ) {
-            std::cout<<symPush.getName ()<<std::endl;
+         std::vector<Symbol> symStr { ( symTree->evalTree ( sym ) ).getSymbolString () };
+         for ( auto const &symPush: symStr ) {
             str2.push_back ( symPush );
          }
          return true;
@@ -47,8 +35,7 @@ void LSystem::updateSpecific ( std::vector<Symbol> const &str1, std::vector<Symb
    for ( auto const &sym: str1 ) {
       if ( constFill ( sym, str2 ) ) {
          continue;
-      }
-      if ( variableFill ( sym, str2 ) ) {
+      } else if ( variableFill ( sym, str2 ) ) {
          continue;
       }
       std::cerr<<"undefined variable: "<<sym.getName ()<<" continuing anyways"<<std::endl;
@@ -67,14 +54,17 @@ void LSystem::update () {
 }
 
 void LSystem::printString () const {
-   if ( mString1.size() == 0 ) {
-      for ( auto const &sym: mString2 ) {
-         std::cout<<sym.getName();
-      }
-      return;
-   } 
-
-   for ( auto const &sym: mString1 ) {
-      std::cout<<sym.getName();
+   for ( auto const &sym: mString2 ) {
+      sym.print ();
    }
+   for ( auto const &sym: mString1 ) {
+      sym.print ();
+   }
+   std::cout<<std::endl;
+}
+
+LSystem::~LSystem () {
+//   for ( auto const &iPair: mTreeTable ) {
+//      delete iPair.second;
+//   }
 }

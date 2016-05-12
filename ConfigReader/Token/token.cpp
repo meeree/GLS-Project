@@ -1,11 +1,6 @@
-#ifndef TOKEN_H
-#define TOKEN_H
 #include "token.h"
-#endif
 
-#ifndef iostream
 #include <iostream>
-#endif
 
 Token::TokenContainer::TokenContainer ( std::string const &stringTok ) : mString { new std::string { stringTok } } {
 }

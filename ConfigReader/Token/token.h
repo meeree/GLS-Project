@@ -1,9 +1,8 @@
-#ifndef string
+#ifndef __TOKEN_H_INCLUDED__
+#define __TOKEN_H_INCLUDED__
+
 #include <string>
-#endif
-#ifndef memory
 #include <memory>
-#endif
 
 class Token {
 private:
@@ -40,6 +39,6 @@ public:
    double const &getFloat () const;
    bool isFloat () const; 
    void setFloat ( double const &newFloat );
-//
-//   ~Token ();
 };
+
+#endif

@@ -1,32 +1,11 @@
-#ifndef PARSER_H
-#define PARSER_H
 #include "parser.h"
-#endif
-
-#ifndef TREE_H 
-#define TREE_H 
 #include "../Tree/tree.h"
-#endif 
-#ifndef NODE_H
-#define NODE_H
+#include "../Compare/compare.h"
 #include "../Node/node.h"
-#endif
-#ifndef TOKEN_H
-#define TOKEN_H
 #include "../Token/token.h"
-#endif
-#ifndef TOKENIZER_H
-#define TOKENIZER_H
 #include "../Tokenizer/tokenizer.h"
-#endif
-#ifndef VALUE_H
-#define VALUE_H
 #include "../Value/value.h"
-#endif
-
-#ifndef iostream
 #include <iostream>
-#endif
 
 std::map<std::string, unsigned> Parser::cndTable { 
    std::make_pair ( "<", 0 ), 
@@ -36,20 +15,6 @@ std::map<std::string, unsigned> Parser::cndTable {
    std::make_pair ( "==", 4 ), 
    std::make_pair ( "!=", 5 )
 };
-
-bool TreeTableCompare::operator ()( SymbolWithoutParams const &sym1, SymbolWithoutParams const &sym2 ) const {
-   std::string const &name1 { sym1.first };
-   std::string const &name2 { sym2.first };
-   std::vector<std::string> const &params1 { sym1.second };
-   std::vector<std::string> const &params2 { sym2.second };
-
-   if ( name1 == name2 && params1 == params2 ) {
-      std::cerr<<"function "+name1+" defined twice with same number of parameters "<<std::endl;
-      exit ( EXIT_FAILURE );
-   }
-
-   return params1.size () < params2.size ();
-}
 
 Parser::Parser ( std::vector<Token> const &tokenString ) : mTokenString { tokenString }, mIter { mTokenString.begin () } {
 }
@@ -102,15 +67,18 @@ void Parser::parseConstants () {
 
 Symbol Parser::symExpr () {
    std::string name { ( *( mIter++ ) ).getString () };
-   std::map<std::string, double> params;
+   std::map<std::string, double> params; ++mIter;
 
    do { 
-      std::string paramName { ( *( ++mIter ) ).getString () };
-      std::cout<<paramName<<std::endl;
+      std::string paramName { ( *mIter ).getString () };
       mIter += 2; Tree * paramArithTree { addExpr () };
       Symbol arbSym; // Arbitrary symbol to satisfy evalTree
       double paramEval { paramArithTree->evalTree ( arbSym ).getFloat () };
       params[paramName] = paramEval; ++mIter;
+
+      if ( strCheck ( "," ) ) {
+         ++mIter;
+      }
    } while ( !strCheck ( ")" ) );
 
    Symbol sym { name, params }; 
@@ -119,11 +87,15 @@ Symbol Parser::symExpr () {
 
 SymbolWithoutParams Parser::symWoParamsExpr () {
    std::string name { ( *( mIter++ ) ).getString () };
-   std::vector<std::string> paramNames;
+   std::vector<std::string> paramNames; ++mIter;
 
    do { 
-      std::string paramName { ( *( ++mIter ) ).getString () };
+      std::string paramName { ( *mIter ).getString () };
       paramNames.push_back ( paramName ); ++mIter;
+
+      if ( strCheck ( "," ) ) {
+         ++mIter;
+      }
    } while ( !strCheck ( ")" ) );
 
    SymbolWithoutParams symW { name, paramNames };
@@ -136,17 +108,19 @@ Tree * Parser::ruleSymExpr () {
    Value nameVal { ( *( mIter++ ) ).getString () };
    Node * nameNode { new ValueNode { nameVal } };
    Tree * nameTree { new WrapperTree { {}, nameNode } };
-   children.push_back ( nameTree );
+   children.push_back ( nameTree ); ++mIter;
 
    do { 
-      Value paramNameVal { ( *( ++mIter ) ).getString () };
+      Value paramNameVal { ( *mIter ).getString () };
       Node * paramNameNode { new ValueNode { paramNameVal } };
       Tree * paramNameTree { new WrapperTree { {}, paramNameNode } };
+
       children.push_back ( paramNameTree );
+      mIter += 2; children.push_back ( addExpr () ); ++mIter;
 
-
-      mIter += 2; Tree * paramArithTree { addExpr () };
-      children.push_back ( paramArithTree ); ++mIter;
+      if ( strCheck ( "," ) ) {
+         ++mIter;
+      }
    } while ( !strCheck ( ")" ) );
 
    Node * symNode { new SymbolNode {} };
@@ -179,14 +153,11 @@ void Parser::parseProductions () {
       Tree * nullTree { new WrapperTree { {}, nullNode } };
 
       SymbolWithoutParams symW { symWoParamsExpr () };
+
       ++mIter; Tree * cndTree { logicExpr () };
       Tree * ruleTree { ruleExpr () };
-
       Tree * prdTree { new ITETree { cndTree, ruleTree, nullTree } };
-      mTreeTable[symW] = prdTree;
-
-      ++mIter;
-      std::cout<<(*mIter).getString()<<std::endl;
+      mTreeTable[symW] = prdTree; ++mIter;
    }
 }
 

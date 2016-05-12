@@ -1,10 +1,8 @@
-#ifndef vector
-#include <vector>
-#endif
-#ifndef VALUE_H
-#define VALUE_H
+#ifndef __NODE_H_INCLUDED__
+#define __NODE_H_INCLUDED__
+
 #include "../Value/value.h"
-#endif
+#include <vector>
 
 class Symbol;
 
@@ -125,3 +123,5 @@ public:
    NotEqualNode () = default;
    Value evalNode ( std::vector<Value > const &inVec, Symbol const &sym );
 };
+
+#endif

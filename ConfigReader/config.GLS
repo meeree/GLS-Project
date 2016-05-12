@@ -1,7 +1,0 @@
-axiom :
-   A(1) ;
-
-productions {
-   : A(t)() := A(t)B(t) ; 
-   : B(t)() := A(t) ;
-}

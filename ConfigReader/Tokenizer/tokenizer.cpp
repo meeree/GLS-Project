@@ -34,8 +34,12 @@ void Tokenizer::tokenizeString ( std::string::iterator &iter ) {
 
 void Tokenizer::tokenizeNum ( std::string::iterator &iter ) {
    std::string val { "" };
+   bool negative { false };
 
-   if ( ! std::isdigit ( *iter ) ) {
+   if ( *iter == '-' ) {
+      ++iter;
+      negative = true;
+   } else if ( ! std::isdigit ( *iter ) ) {
       return tokenizeBool ( iter );
    }
 
@@ -44,9 +48,13 @@ void Tokenizer::tokenizeNum ( std::string::iterator &iter ) {
    }
 
    if ( !( *iter == '.' ) ) {
-      Token tok { std::stoi ( val ) };
-      mTokenString.push_back ( tok );
-      
+      if ( negative ) {
+         Token tok { -std::stoi ( val ) };
+         mTokenString.push_back ( tok );
+      } else {
+         Token tok { std::stoi ( val ) };
+         mTokenString.push_back ( tok );
+      }
       return tokenizeString ( iter );
    }
 
@@ -55,9 +63,13 @@ void Tokenizer::tokenizeNum ( std::string::iterator &iter ) {
       val += *( iter++ );
    }
 
-   Token tok { std::stod ( val ) };
-   mTokenString.push_back ( tok );
-
+   if ( negative ) {
+      Token tok { -std::stod ( val ) };
+      mTokenString.push_back ( tok );
+   } else {
+      Token tok { std::stod ( val ) };
+      mTokenString.push_back ( tok );
+   }
    return tokenizeString ( iter );
 }
 
@@ -114,6 +126,6 @@ void Tokenizer::tokenizeBool ( std::string::iterator &iter ) {
 void Tokenizer::tokenizeMisc ( std::string::iterator &iter ) {
    if ( *iter == '\0' ) {
       return;
-   }
+   } 
    return tokenizeString ( ++iter );
 }

@@ -10,9 +10,14 @@ productions = "PRODUCTIONS",
               [ symbolWithoutParams, "(", [ paramExpression, condition, arithmeticExpression, { logicalConnective, paramExpression, condition, arithmeticExpression } ], ")", ":=", { symbolWithRule } ], ";",
               "END" ;
 
+graphics = "GRAPHICS",
+              [ symbolWithoutParams, ":=", graphicCommand, { graphicCommand } ], ";",
+            "END" ; 
+
 symbol = word, "(", word, ",", arithmeticExpression{ word, ",", arithmeticExpression }, ")" ;
 symbolWithoutParams = word, "(", { word }, ")" ;
 symbolWithRule = word, "(", { paramExpression }, ")" ;
+graphicCommand = "GLSRotateX" | "GLSRotateY" | "GLSRotateZ" | "GLSWidth" | "GLSMove", "(", word, {word}, ")", ";" ;
 
 paramExpression = subParamExpression, { subParamExpression };
 subParamExpression =  [ "(" ], number | word, arithmeticOperator, number | word, { number | word, arithmeticOperator, number | word }, [ ")" ], [ arithmeticOperator, number | word ] ;

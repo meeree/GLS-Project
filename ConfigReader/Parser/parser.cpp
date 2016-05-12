@@ -43,6 +43,9 @@ void Parser::mainParse () {
 
    while ( !strCheck ( "PRODUCTIONS" ) ) { ++mIter; }
    ++mIter; parseProductions (); mIter = mTokenString.begin ();
+//
+//   while ( !strCheck ( "GRAPHICS" ) ) { ++mIter; }
+//   ++mIter; parseGraphics ();
 }
 
 void Parser::parseAxiom () {
@@ -69,17 +72,17 @@ Symbol Parser::symExpr () {
    std::string name { ( *( mIter++ ) ).getString () };
    std::map<std::string, double> params; ++mIter;
 
-   do { 
+   while ( !strCheck ( ")" ) ) {
       std::string paramName { ( *mIter ).getString () };
-      mIter += 2; Tree * paramArithTree { addExpr () };
+      mIter += 2; 
+      Tree * paramArithTree { addExpr () };
       Symbol arbSym; // Arbitrary symbol to satisfy evalTree
       double paramEval { paramArithTree->evalTree ( arbSym ).getFloat () };
       params[paramName] = paramEval; ++mIter;
-
       if ( strCheck ( "," ) ) {
          ++mIter;
       }
-   } while ( !strCheck ( ")" ) );
+   }
 
    Symbol sym { name, params }; 
    return sym;
@@ -89,14 +92,14 @@ SymbolWithoutParams Parser::symWoParamsExpr () {
    std::string name { ( *( mIter++ ) ).getString () };
    std::vector<std::string> paramNames; ++mIter;
 
-   do { 
+   while ( !strCheck ( ")" ) ) {
       std::string paramName { ( *mIter ).getString () };
       paramNames.push_back ( paramName ); ++mIter;
 
       if ( strCheck ( "," ) ) {
          ++mIter;
       }
-   } while ( !strCheck ( ")" ) );
+   }
 
    SymbolWithoutParams symW { name, paramNames };
    return symW;
@@ -110,18 +113,20 @@ Tree * Parser::ruleSymExpr () {
    Tree * nameTree { new WrapperTree { {}, nameNode } };
    children.push_back ( nameTree ); ++mIter;
 
-   do { 
+   while ( !strCheck ( ")" ) ) {
       Value paramNameVal { ( *mIter ).getString () };
       Node * paramNameNode { new ValueNode { paramNameVal } };
       Tree * paramNameTree { new WrapperTree { {}, paramNameNode } };
 
       children.push_back ( paramNameTree );
-      mIter += 2; children.push_back ( addExpr () ); ++mIter;
+      mIter += 2; 
+      children.push_back ( addExpr () ); 
+      ++mIter;
 
       if ( strCheck ( "," ) ) {
          ++mIter;
       }
-   } while ( !strCheck ( ")" ) );
+   }
 
    Node * symNode { new SymbolNode {} };
    Tree * symTree { new WrapperTree { children, symNode } };
@@ -136,7 +141,8 @@ Tree * Parser::ruleExpr () {
    mIter += 2;
    while ( !strCheck ( ";" ) ) {
       Tree * ruleSymTree { ruleSymExpr () }; 
-      children.push_back ( ruleSymTree ); ++mIter; 
+      children.push_back ( ruleSymTree ); 
+      ++mIter; 
    }
 
 
@@ -160,6 +166,13 @@ void Parser::parseProductions () {
       mTreeTable[symW] = prdTree; ++mIter;
    }
 }
+
+//void Parser::parseGraphics () {
+//   while ( !strCheck ( "END" ) ) {
+//      std::string name { ( *( mIter++ ) ).getString () };
+//      
+//   }
+//}
 
 
 Tree * Parser::logicExpr () {

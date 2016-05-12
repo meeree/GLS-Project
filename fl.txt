@@ -1,8 +1,18 @@
 AXIOM 
-   F(t,1.5,s,10)G(t,0.3,s,10);
+   Branch(length,10,width,5);
 CONSTANTS
-   P(t),M(t);
+   RotX(theta),RotZ(theta),StartBrack(),EndBrack();
 PRODUCTIONS
-   F(t,s)(t>3):=F(t,t/2, s,s/3) M(t,t) G(t,s/2, s,t/3) P(t,s);
-   G(t,s)(s>3):=G(t,s/2, s,t/3) P(t,t) F(t,s/2, s,t/3) M(t,t);
+   Branch(length,width)(length>width & width>0.1):=Branch(length,length,width,width)Branch(length,length~6.28,width,width/1.1)Apex(length,length/3,width,width/1.5);
+   Apex(length,width)(length==length):=StartBrack()RotZ(theta,3.14/2)Branch(length,length,width,width)EndBrack()
+                                       StartBrack()RotZ(theta,-3.14/2)Branch(length,length,width,width)EndBrack()
+                                       StartBrack()RotX(theta,3.14/2)Branch(length,length,width,width)EndBrack()
+                                       StartBrack()RotX(theta,-3.14/2)Branch(length,length,width,width)EndBrack();
+END
+
+GRAPHICS
+   RotZ(theta):=GLSRotateZ(theta);
+   RotX(theta):=GLSRotateX(theta);
+   Branch(length,width):=GLSWidth(width)GLSMove(length);
+      
 END

@@ -19,6 +19,7 @@ public:
    void width ( double const &girth );
    void push ();
    void pop ();
+   std::vector<double> getPos () const;
 };
 
 #endif

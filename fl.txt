@@ -1,13 +1,14 @@
 AXIOM 
-   Branch(length,10,width,5);
+   Branch(length,1,width,0.5)Apex(length,0.5,width,0.5);
 CONSTANTS
-   RotX(theta),RotZ(theta),StartBrack(),EndBrack();
+   RotX(theta),RotZ(theta),StartBrack(),EndBrack(),Branch(length,width);
 PRODUCTIONS
-   Branch(length,width)(length>width & width>0.1):=Branch(length,length,width,width)Branch(length,length/2,width,width/1.1)Apex(length,length/3,width,width/1.5);
-   Apex(length,width)(length==length):=StartBrack()RotZ(theta,3.14/2)Branch(length,length,width,width)EndBrack()
-                                       StartBrack()RotZ(theta,-3.14/2)Branch(length,length,width,width)EndBrack()
-                                       StartBrack()RotX(theta,3.14/2)Branch(length,length,width,width)EndBrack()
-                                       StartBrack()RotX(theta,-3.14/2)Branch(length,length,width,width)EndBrack();
+   Apex(length,width)(length==length):=
+                                       StartBrack()RotZ(theta,3.14/2)Branch(length,length,width,width)Apex(length,length/3,width,width/1.5)EndBrack()
+                                       StartBrack()RotZ(theta,-3.14/2)Branch(length,length,width,width)Apex(length,length/3,width/width/1.5)EndBrack()
+                                       StartBrack()RotX(theta,3.14/2)Branch(length,length,width,width)Apex(length,length/3,width/width/1.5)EndBrack()
+                                       StartBrack()RotX(theta,-3.14/2)Branch(length,length,width,width)Apex(length,length/3,width/width/1.5)EndBrack()
+                                       Branch(length,length,width,width)Apex(length,length/2,width,width/1.3);
 END
 
 GRAPHICS

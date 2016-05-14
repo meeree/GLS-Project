@@ -14,10 +14,9 @@ Turtle::Turtle ( std::vector<double> const &position, std::vector<double> const 
 void Turtle::move ( double const &distance ) {
    std::vector<double> const &posTop { mPositionStack.top () };
    std::vector<double> const &oriTop { mOrientationStack.top () };
-   std::vector<double> newPosTop  { posTop.at ( 0 ) * oriTop.at ( 0 ),
-                                    posTop.at ( 1 ) * oriTop.at ( 1 ),
-                                    posTop.at ( 2 ) * oriTop.at ( 2 ) };
-   std::cout<<newPosTop[0]<<','<<newPosTop[1]<<','<<newPosTop[2]<<std::endl;
+   std::vector<double> newPosTop  { posTop.at ( 0 ) + distance * oriTop.at ( 0 ),
+                                    posTop.at ( 1 ) + distance * oriTop.at ( 1 ),
+                                    posTop.at ( 2 ) + distance * oriTop.at ( 2 ) };
    mPositionStack.push ( newPosTop );
 }
 
@@ -66,4 +65,8 @@ void Turtle::pop () {
       mPositionStack.pop ();
    }
    mPopStack.pop ();
+}
+
+std::vector<double> Turtle::getPos () const {
+   return mPositionStack.top ();
 }

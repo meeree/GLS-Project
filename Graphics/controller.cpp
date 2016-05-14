@@ -22,31 +22,6 @@ static struct {
 } attrs;
 
 void key_callback ( GLFWwindow* window, int key, int scancode, int action, int mods ) {
-   if ( key == GLFW_KEY_Q && action == GLFW_PRESS ) {
-      glfwTerminate ( );
-   }
-   if ( key == GLFW_KEY_UP && action == GLFW_PRESS ) {
-      attrs.zoomScalar -= 0.1*attrs.zoomScalar;
-   }
-   if ( key == GLFW_KEY_DOWN && action == GLFW_PRESS ) {
-      attrs.zoomScalar += 0.1*attrs.zoomScalar;
-   }
-   if ( key == GLFW_KEY_W && action == GLFW_PRESS ) {
-      attrs.ypos += 0.1*attrs.zoomScalar;
-   }
-   if ( key == GLFW_KEY_S && action == GLFW_PRESS ) {
-      attrs.ypos -= 0.1*attrs.zoomScalar;
-   }
-   if ( key == GLFW_KEY_D && action == GLFW_PRESS ) {
-      attrs.xpos += 0.1*attrs.zoomScalar;
-   }
-   if ( key == GLFW_KEY_A && action == GLFW_PRESS ) {
-      attrs.xpos -= 0.1*attrs.zoomScalar;
-   }
-   if ( key == GLFW_KEY_B && action == GLFW_PRESS ) {
-      auto iter = glGetUniformLocation ( attrs.shaderProgram, "iter" );
-      glUniform1i ( iter, 3000 );
-   }
 }
 
 int main ( ) {

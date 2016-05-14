@@ -53,14 +53,11 @@ void LSystem::update () {
    mString1.clear ();
 }
 
-void LSystem::printString () const {
-   for ( auto const &sym: mString2 ) {
-      sym.print ();
+std::vector<Symbol> LSystem::getString () const {
+   if ( mString1.size () == 0 ) {
+      return mString2;
    }
-   for ( auto const &sym: mString1 ) {
-      sym.print ();
-   }
-   std::cout<<std::endl;
+   return mString1;
 }
 
 LSystem::~LSystem () {

@@ -3,7 +3,7 @@ AXIOM
 CONSTANTS
    RotX(theta),RotZ(theta),StartBrack(),EndBrack();
 PRODUCTIONS
-   Branch(length,width)(length>width & width>0.1):=Branch(length,length,width,width)Branch(length,length~6.28,width,width/1.1)Apex(length,length/3,width,width/1.5);
+   Branch(length,width)(length>width & width>0.1):=Branch(length,length,width,width)Branch(length,length/2,width,width/1.1)Apex(length,length/3,width,width/1.5);
    Apex(length,width)(length==length):=StartBrack()RotZ(theta,3.14/2)Branch(length,length,width,width)EndBrack()
                                        StartBrack()RotZ(theta,-3.14/2)Branch(length,length,width,width)EndBrack()
                                        StartBrack()RotX(theta,3.14/2)Branch(length,length,width,width)EndBrack()

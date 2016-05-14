@@ -23,7 +23,7 @@ private:
 public:  
    LSystem ( std::vector<Symbol> const &axiom, std::map<SymbolWithoutParams, Tree*, TreeTableCompare> const &treeTable, std::vector<SymbolWithoutParams> const &constants ); 
    void update ();
-   void printString () const;
+   std::vector<Symbol> getString () const;
    ~LSystem ();
 };
 

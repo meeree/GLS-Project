@@ -5,6 +5,8 @@
 #include "./ConfigReader/Value/value.h"
 #include "./ConfigReader/Parser/parser.h"
 #include "./L-System/lSystem.h"
+#include "./Graphics/Turtle/turtle.h"
+#include <iostream>
 
 int main () {
    std::ifstream fl;
@@ -22,6 +24,14 @@ int main () {
 
    for ( int i = 0; i < 2; ++i ) {
       l.update (); 
-      l.printString ();
+   }
+
+   Turtle turt ( {0,0,0}, {0,1,0} );
+
+   for ( auto const &sym: l.getString () ) {
+      if ( sym.getName () == "Branch" ) {
+         std::cout<<sym.getParam ( "length" )<<std::endl;
+         turt.move ( sym.getParam ( "length" ) );
+      }
    }
 }

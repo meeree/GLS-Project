@@ -1,4 +1,4 @@
-# GLS-Projec
+# GLS-Project
 Welcome to the GLS (Generalized Lindenmeyer System) project. 
 I was inspired to create this project after looking at the other L-Systems -- and parsers for such languages -- currently available. 
 Though these languages are quite powerful for simulating growth graphically, this is all they can be used for. 

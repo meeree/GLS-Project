@@ -1,0 +1,14 @@
+(* parser grammar--any undefined nonterminals are defined in tokenizer grammar *)
+
+Productions = PrdsLbl, Production, { Production }, EndLbl ;
+Production = Symbol, PrdEquLbl, Rule, SemiColon, ;
+Rule = [ OpenSquareBrack, Probability, CloseSquareBrack ], [ OpenRoundBrack, Cnd, CloseRoundBrack ], SymbolWithExpr | OpenRoundBrack, Rule, CloseRoundBrack, [ Or,  Rule ] ;
+Probability = Number, Percent ; 
+Cnd = CndSingular, [ And | Or, Cnd ];
+CndSingular = AddExpr, CndOp, AddExpr ;
+Symbol = Word, OpenRoundBrack, [ Word, { Comma, Word } ], CloseRoundBrack ; 
+SymbolWithExpr = Word, OpenRoundBrack, [ AddExpr, { Comma, AddExpr } ], CloseRoundBrack ;
+AddExpr = MulExpr, [ Plus | Min, AddExpr ] ; 
+MulExpr = PowExpr, [ Mul | Div, AddExpr ] ;
+PowExpr = Value, [ Pow | PowRoot, AddExpr ] ;
+Value = Word | Int | Double ;

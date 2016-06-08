@@ -1,0 +1,50 @@
+Double = Int, Period, [ UnsignedInt ] | [ Int ], Period, UnsignedInt ;
+Int = [ Min ], UnsignedInt ;
+UnsignedInt = NonZeroDigit, { Digit } ;
+Digit = NonZeroDigit | "0" ;
+NonZeroDigit = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+Word = Letter, { Letter } ;
+Letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
+       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+       | "V" | "W" | "X" | "Y" | "Z" | "a" | "b"
+       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
+       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
+       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
+       | "x" | "y" | "z" ;
+
+CndOp = ">" | "<" | ">=" | "<=" | "==" | "!=" ;
+
+(* PrdsLbl = "PRDS" *);
+(* EndLbl = "END" *);
+PrdEquLbl = ":=" ;
+SemiColon = ";" ;
+Comma = "," ;
+OpenSquareBrack = "[" ; 
+CloseSquareBrack = "]" ; 
+OpenRoundBrack = "(" ; 
+CloseRoundBrack = ")" ; 
+And = "&" ;
+Or = "|" ;
+Percent = "%" ;
+Plus = "+" ;
+Min = "-" ;
+Mul = "*" ;
+Div = "/" ;
+Pow = "^" ;
+PowRoot = "~" ;
+Period = "." ;
+
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA
+ADD COMMA

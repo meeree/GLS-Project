@@ -1,6 +1,5 @@
 #include "tokenizer.h"
 #include "token.h"
-#include <cctype>
 
 #include <iostream>
 #include <vector>
@@ -105,7 +104,6 @@ void Tokenizer::tokenizeDouble () {
     /* first double form: int "." [unsignedInt]
        second double form: [int] "." [unsignedInt] */
     bool firstForm { false };
-    std::string buff;
     if ( std::isdigit ( mHead ) ) {
         firstForm = true;
         /* if the double or int starts w/ zero we cannot have a digit after it. */
@@ -118,13 +116,10 @@ void Tokenizer::tokenizeDouble () {
         }
     }
     while ( std::isdigit ( mHead ) ) {
-        std::cout<<mHead<<std::endl;
         shift (); 
-        buff += mHead;
     }
-    std::cout<<mBuff<<std::endl;
     if ( mHead != '.' ) {
-        std::unique_ptr<Token> tk { new Token { std::stoi ( buff ) } };
+        std::unique_ptr<Token> tk { new Token { std::stoi ( mBuff ) } };
         acceptToken ( tk );
         return;
     }

@@ -1,14 +1,40 @@
 #include <string> 
-
-enum class tk_t {
-    Double, Int, Word, CndOp, 
-    PrdEquLbl, SemiColon, Comma,
-    OpnSqrBrk, ClsSqrBrk, OpnRndBrk, ClsRndBrk,
-    And, Or, Percent,
-    Plus, Min, Mul, Div, Pow, PowRt
-};
+#include <map>
 
 class Token {
+public:
+    Token () = default;
+    ~Token ();
+
+    void error () const;
+
+    enum class type_t {
+        DOUBLE, INT, WORD, SYMBOL
+    };
+
+    /* no copy assignment or construction because that would
+       copy the pointers in storage. */
+    Token ( Token const& ) = delete;
+    Token& operator = ( Token const& ) = delete;
+
+    Token ( type_t const& type );
+    bool isInt () const;
+    bool isDouble () const;
+    bool isWord () const;
+    bool isSymbol () const;
+
+    Token ( int const& cpyInt );
+    int const& getInt () const;
+
+    Token ( double const& cpyDbl );
+    double const& getDouble () const;
+
+    /* we need to take type in string constructor because that is how 
+       we will store both words and symbols */
+    Token ( std::string const& cpyStr, type_t const& type );
+    std::string const& getSymbol () const;
+    std::string const& getWord () const;
+
 private:
     union Storage {
         Storage () = default;
@@ -23,27 +49,7 @@ private:
         Storage ( std::string const& cpyStr );
     } mStorage;
 
-public:
-    tk_t mType;
-    
-    Token () = default;
-    ~Token ();
-    // no copy assignment or construction because that would
-    // copy the pointers in storage. 
-    Token ( Token const& ) = delete;
-    Token& operator = ( Token const& ) = delete;
+    type_t mType;
 
-    Token ( tk_t const& type );
-    tk_t const& getType () const;
-
-    Token ( int const& cpyInt );
-    int const& getInt () const;
-
-    Token ( double const& cpyDbl );
-    double const& getDouble () const;
-
-    //we need to take type in string constructor because that is how 
-    //we will store both words and conditions 
-    Token ( std::string const& cpyStr, tk_t const& type );
-    std::string const& getString () const;
+    static std::map<type_t, std::string> mTypeStrMap;
 };
